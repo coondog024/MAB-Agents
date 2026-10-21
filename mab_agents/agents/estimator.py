@@ -1,10 +1,9 @@
 """Estimate Auditor & Supplement Writer: finds what the first estimate missed."""
 from __future__ import annotations
 
-from anthropic import beta_tool
 
 from ..tools import estimate_tools
-from .base import Agent, Ctx, j
+from .base import Agent, Ctx, beta_tool, j
 
 INSTRUCTIONS = """
 You review damage estimates the way a senior estimator does before they leave the shop or go to the carrier.
@@ -62,7 +61,7 @@ def build(ctx: Ctx) -> Agent:
         role="a senior collision estimator who catches not-included operations and writes supplements that get approved the first time",
         instructions=INSTRUCTIONS,
         tools=[audit_estimate_text, audit_repair_order, estimate_totals],
-        keywords=["estimate", "supplement", "blend", "not included", "p-page", "refinish", "labor time", "missed", "audit", "feather", "prime", "teardown found", "line item"],
+        keywords=["estimate", "blend", "not included", "p-page", "refinish", "labor time", "missed", "audit", "feather", "prime", "teardown found", "line item", "csv", "not on it", "what's missing", "quarter panel", "labor hours"],
         examples=[
             "Audit RO 26-1042 and tell me what the carrier's estimate missed.",
             "Here's a CSV of the adjuster's estimate for a quarter panel replacement. What's not on it?",

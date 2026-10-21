@@ -21,9 +21,15 @@ jobs:
       - name: Offline smoke test
         env:
           MAB_DB: /tmp/smoke.db
+          MAB_KB: /tmp/smoke_kb.db
         run: |
           mab init
           mab board
           mab audit mab_agents/data/sample_estimate.csv --year 2021
           mab msg 26-1042
           mab brief
+          mab queue
+          mab lookup 410-555-0142
+          mab script deductible
+          mab price 412.50 --type aftermarket --cost 189
+          mab kb search "deductible"

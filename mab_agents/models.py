@@ -132,6 +132,9 @@ class RepairOrder:
     notes: list[Note] = field(default_factory=list)
     airbags_deployed: bool = False
     adas_equipped: bool = True
+    # Items the customer pays beyond the deductible: betterment, carrier-denied operations,
+    # upgrades, prior damage they asked us to fix. [{description, amount, reason}]
+    customer_pay_items: list[dict] = field(default_factory=list)
 
     # ---- derived helpers -------------------------------------------------
     def labor_hours(self) -> float:
@@ -142,6 +145,9 @@ class RepairOrder:
 
     def parts_total(self) -> float:
         return round(sum(l.part_price * l.qty for l in self.lines), 2)
+
+    def customer_pay_total(self) -> float:
+        return round(sum(float(i.get("amount", 0)) for i in self.customer_pay_items), 2)
 
     def days_in_shop(self, today: date | None = None) -> int:
         if not self.dropped_off:

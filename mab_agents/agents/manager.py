@@ -1,11 +1,10 @@
 """Shop Manager: the coordinator that sees the whole shop and borrows every other agent's tools."""
 from __future__ import annotations
 
-from anthropic import beta_tool
 
 from ..tools import kpi_tools
-from . import adas, customer, estimator, insurance, parts, production
-from .base import Agent, Ctx, j
+from . import adas, customer, estimator, front_desk, insurance, parts, production
+from .base import Agent, Ctx, beta_tool, j, tool_name
 
 INSTRUCTIONS = """
 You are the general manager's chief of staff. You have every specialist's tools and you use them in combination.
@@ -48,13 +47,13 @@ def build(ctx: Ctx) -> Agent:
         return j({"ok": True})
 
     shared = []
-    for mod in (production, parts, estimator, insurance, customer, adas):
+    for mod in (production, parts, estimator, insurance, customer, adas, front_desk):
         shared.extend(mod.build(ctx).tools)
     # De-duplicate by tool name, keeping the first.
     seen: set[str] = set()
     tools = []
     for t in [daily_brief, shop_kpis, repair_order, add_note] + shared:
-        name = getattr(t, "name", getattr(t, "__name__", str(t)))
+        name = tool_name(t)
         if name not in seen:
             seen.add(name)
             tools.append(t)

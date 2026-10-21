@@ -1,0 +1,22 @@
+# Collision Repair Glossary (starter)
+
+- **RO (repair order)**: the job file for one vehicle. Everything hangs off the RO number.
+- **Estimate / supplement**: the first damage write-up and any later additions found during teardown. Supplements are normal; most insurer photo estimates are incomplete.
+- **Teardown / blueprint**: disassembling the damaged area to find all the damage before parts are ordered.
+- **DRP (direct repair program)**: a carrier's network of preferred shops with agreed rules on parts, rates and turnaround.
+- **ACV (actual cash value)**: what the carrier says the car was worth before the loss. Used in total-loss decisions.
+- **Total loss**: when repair cost reaches the state threshold or the carrier's formula against ACV. The carrier decides.
+- **R&I / R&R**: remove and install (same part goes back on) / remove and replace (new part).
+- **Blend**: fading new paint into an adjacent undamaged panel so the colour matches.
+- **Not-included operations**: work the labor database does not include in a base time (cover car, feather-prime-block, set up and measure) and must be written as separate lines.
+- **P-pages / MOTOR Guide to Estimating**: the procedure pages that define what each labor time includes.
+- **Pre- and post-repair scan**: computer diagnostic before and after repairs; required by most manufacturers.
+- **ADAS / calibration**: driver-assistance sensors (cameras, radars) that must be re-aimed after many repairs.
+- **OEM / aftermarket / recycled (LKQ)**: new from the manufacturer / new from another maker / used from a salvage vehicle.
+- **CAPA / NSF**: certification programs for aftermarket parts.
+- **Cycle time (keys-to-keys)**: calendar days from drop-off to pickup.
+- **Touch time**: labor hours applied per day the car is in the shop. Higher is better.
+- **CSI**: customer satisfaction index, the survey score carriers and the shop track.
+- **Direction to pay / assignment of proceeds**: the customer's authorization for the insurer to pay the shop directly.
+- **Rental clock**: the number of covered rental days; every day of delay burns it.
+- **Sublet**: work sent out (alignment, glass, calibration, wheel repair) and billed through the RO.

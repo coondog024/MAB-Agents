@@ -40,5 +40,24 @@ def carrier_rule(shop: dict[str, Any], carrier: str | None) -> dict[str, Any] | 
     return None
 
 
+def data_dir() -> Path:
+    """Where mab.db, mab_kb.db and knowledge/ live: next to shop.toml when one exists, else the cwd."""
+    sp = shop_path()
+    return sp.parent if sp != EXAMPLE else Path.cwd()
+
+
 def db_path() -> Path:
-    return Path(os.getenv("MAB_DB", "mab.db"))
+    return Path(os.getenv("MAB_DB") or data_dir() / "mab.db")
+
+
+def kb_db_path() -> Path:
+    return Path(os.getenv("MAB_KB") or data_dir() / "mab_kb.db")
+
+
+def knowledge_dir(shop: dict[str, Any] | None = None) -> Path:
+    env = os.getenv("MAB_KNOWLEDGE_DIR")
+    if env:
+        return Path(env)
+    rel = (shop or {}).get("knowledge", {}).get("dir", "knowledge")
+    rel = Path(rel)
+    return rel if rel.is_absolute() else data_dir() / rel

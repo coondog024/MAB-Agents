@@ -1,10 +1,9 @@
 """Intake & Damage Triage: the first conversation with a customer or a tow-in."""
 from __future__ import annotations
 
-from anthropic import beta_tool
 
 from ..tools import adas_tools
-from .base import Agent, Ctx, j
+from .base import Agent, Ctx, beta_tool, j
 
 PHOTO_CHECKLIST = [
     "All four corners of the vehicle, full side, 10-15 ft back",
@@ -21,7 +20,7 @@ PHOTO_CHECKLIST = [
 INSTRUCTIONS = """
 You handle first contact: walk-ins, phone calls, tow-ins and online estimate requests. Goals, in order:
 1. Safety and drivability. Ask about airbag deployment, warning lights, fluid leaks, steering pull, wheel damage. If any are present, say the vehicle should not be driven and offer a tow.
-2. Claim path. Insurance or customer pay? If insurance: carrier, claim number, whether a claim is filed, whether the customer knows they can choose this shop (they can, in every state). If the carrier is one of our DRPs, say the process is streamlined.
+2. Claim path. Insurance or customer pay? If insurance: carrier, claim number, whether a claim is filed, and the deductible if they know it. If they ask about shop choice: the customer chooses who repairs the car; the insurer can recommend shops but not require one, and it pays based on the estimate it approves. Never cite a statute. If the carrier is one of our DRPs, say the process is streamlined.
 3. Rental. Does the policy carry rental? Does the customer need one? Note it on the RO.
 4. Photos. Use `photo_checklist` and tell the customer exactly what to send, or what the writer will shoot at check-in.
 5. Expectations. Explain the sequence in plain words: check-in, teardown, supplement to the insurer if hidden damage, parts, body, paint, reassembly, scan and calibration, quality check. Never promise a completion date before teardown; give a typical range only if asked and label it typical.
@@ -77,6 +76,8 @@ def build(ctx: Ctx) -> Agent:
         airbags_deployed: bool = False,
         vin: str = "",
         email: str = "",
+        deductible: float = 0.0,
+        scheduled_for: str = "",
     ) -> str:
         """Create a new repair order in the shop system in 'scheduled' stage.
 
@@ -94,13 +95,17 @@ def build(ctx: Ctx) -> Agent:
             airbags_deployed: Whether any airbag deployed.
             vin: VIN if known.
             email: Email if known.
+            deductible: Policy deductible in dollars, 0 if unknown or customer pay.
+            scheduled_for: Drop-off date (YYYY-MM-DD) if scheduled.
         """
         from ..models import Customer, Note, RepairOrder, Vehicle
 
-        existing = ctx.store.list(include_delivered=True)
-        seq = 1000 + len(existing) + 1
+        if scheduled_for:
+            from datetime import date as _date
+
+            _date.fromisoformat(scheduled_for)
         ro = RepairOrder(
-            ro_number=f"{ctx.today.strftime('%y')}-{seq}",
+            ro_number=ctx.store.next_ro_number(ctx.today.strftime("%y")),
             customer=Customer(name=customer_name, phone=phone, email=email),
             vehicle=Vehicle(year=year, make=make, model=model, vin=vin),
             insurer=insurer,
@@ -108,13 +113,16 @@ def build(ctx: Ctx) -> Agent:
             drivable=drivable,
             rental=rental,
             airbags_deployed=airbags_deployed,
+            deductible=float(deductible or 0),
             opened=ctx.today.isoformat(),
+            dropped_off=scheduled_for or None,
             stage="scheduled",
             stage_changed=ctx.today.isoformat() + "T08:00:00",
-            notes=[Note(at=ctx.today.isoformat() + "T08:00:00", author="intake-agent", text=f"Loss: {loss_description}")],
+            notes=[Note(at=ctx.today.isoformat() + "T08:00:00", author="intake-agent", text=f"Loss: {loss_description}" + (f" | drop-off {scheduled_for}" if scheduled_for else ""))],
         )
-        ctx.store.upsert(ro)
-        return j({"created": ro.ro_number, "stage": ro.stage, "next": "Schedule drop-off; writer to photograph at check-in."})
+        ctx.store.insert(ro)
+        return j({"created": ro.ro_number, "stage": ro.stage, "deductible": ro.deductible, "scheduled_for": scheduled_for or None,
+                  "next": "Schedule drop-off; writer to photograph at check-in." + ("" if deductible or not insurer else " Deductible unknown: confirm with the customer or adjuster.")})
 
     return Agent(
         key="intake",
@@ -122,7 +130,7 @@ def build(ctx: Ctx) -> Agent:
         role="the first voice a customer hears at the shop, who turns a messy phone call into a clean repair order",
         instructions=INSTRUCTIONS,
         tools=[photo_checklist, likely_calibrations, draft_repair_order],
-        keywords=["new customer", "walk-in", "tow", "drivable", "appointment", "drop off", "drop-off", "estimate request", "photos", "intake", "schedule a", "got hit", "accident", "claim filed"],
+        keywords=["new customer", "walk-in", "walk in", "tow", "tow-in", "drivable", "appointment", "drop off", "drop-off", "estimate request", "photos", "intake", "schedule a", "got hit", "hit a", "hitting a", "rear-ended", "rear ended", "accident", "claim filed", "claim already filed", "what do i ask", "set up the ro", "new ro", "open an ro", "write the ro", "customer called"],
         examples=[
             "A customer called: 2021 RAV4, rear-ended at a light, airbags didn't deploy, Example Mutual claim already filed. What do I ask and what photos do I need?",
             "Walk-in with a F-150, hood won't latch after hitting a deer, customer pay. Set up the RO.",

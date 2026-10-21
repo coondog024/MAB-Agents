@@ -13,6 +13,12 @@ review_url = "https://g.page/r/your-google-review-link"
 manager = "Shop Manager"
 # Certifications you actually hold. Agents only cite these.
 certifications = ["I-CAR Gold Class"]
+# Your written warranty, as you would say it to a customer. Leave empty to say nothing about warranty.
+warranty = "Limited lifetime warranty on workmanship and paint for as long as you own the vehicle; parts carry the manufacturer's or vendor's warranty"
+# Total-loss rule for your state, verified against the current statute by a human: a percentage of ACV
+# like "75", or "TLF" for total-loss-formula states (repair + salvage >= ACV). Overrides the reference table.
+total_loss_rule = "75"
+total_loss_rule_verified = "2026-01-01"
 # Direct repair program (DRP) partners. Agents follow each carrier's rules listed below.
 drps = ["Example Mutual", "Sample Insurance"]
 
@@ -36,14 +42,40 @@ parts_gross_profit = 0.28
 labor_gross_profit = 0.60
 stalled_after_days = 2              # no stage change for this many days = flag it
 
+[parts]
+# How the shop prices parts. Dealers sell OEM to shops below list and the shop bills list;
+# aftermarket / recycled are bought at a quoted cost and marked up.
+oem_dealer_discount = 0.25        # our cost = list x (1 - 0.25)
+aftermarket_markup = 0.35         # we bill cost x 1.35
+recycled_markup = 0.30
+reconditioned_markup = 0.30
+sublet_markup = 0.25
+rental_cost_per_day = 45.00       # what one day of delay costs when comparing a cheap slow part to a fast one
+preferred_vendors = ["Toyota dealer - Anytown", "Honda dealer - Anytown", "Ford dealer - Anytown", "LKQ / Keystone"]
+# Where the Parts agent looks when asked to source a part online (it uses web search).
+online_sources = ["the brand's dealer parts site", "RockAuto", "Amazon", "eBay Motors", "LKQ Online", "CarParts.com"]
+
+[knowledge]
+dir = "knowledge"                 # drop PDFs, .md, .txt, .csv here and run `mab kb sync`
+chunk_chars = 2200
+overlap_chars = 250
+
 [sms]
 max_chars = 300
 signature = "- Mullikin's Auto Body"
 
 # Per-carrier rules the Parts and Insurance agents follow. Add one block per DRP.
+# parts_preference is the human-readable rule the agents quote. The structured fields
+# below it are what the Parts tools actually apply: a part type is only recommended when the
+# line description matches one of the listed part names and the vehicle is old enough.
 [[carrier_rules]]
 name = "Example Mutual"
 parts_preference = "OEM on current-year, aftermarket CAPA-certified allowed on 2+ model years for cosmetic parts, recycled allowed on assemblies"
+aftermarket_allowed_parts = ["bumper cover", "fascia", "grille", "headlamp", "tail lamp", "mirror", "fender", "hood"]
+aftermarket_min_age_years = 2
+recycled_allowed_parts = ["door", "liftgate", "deck lid", "assembly", "engine", "transmission", "axle"]
+recycled_min_age_years = 2
+aftermarket_max_markup = 0.35
 supplement_photos_required = true
 pre_post_scan_covered = true
 rental_max_days = 30
@@ -52,6 +84,9 @@ notes = "Submit supplements through the carrier portal within 24h of teardown."
 [[carrier_rules]]
 name = "Sample Insurance"
 parts_preference = "OEM only on vehicles under 12 months, otherwise aftermarket allowed on bumper covers and lamps"
+aftermarket_allowed_parts = ["bumper cover", "fascia", "headlamp", "tail lamp"]
+aftermarket_min_age_years = 1
+recycled_allowed_parts = []
 supplement_photos_required = true
 pre_post_scan_covered = true
 rental_max_days = 25

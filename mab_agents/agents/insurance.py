@@ -1,10 +1,9 @@
 """Insurance & Claims Liaison: supplements, total-loss math, rentals, storage."""
 from __future__ import annotations
 
-from anthropic import beta_tool
 
 from ..tools import insurer_tools
-from .base import Agent, Ctx, j
+from .base import Agent, Ctx, beta_tool, j
 
 INSTRUCTIONS = """
 You handle the carrier side: supplements, rental extensions, total-loss conversations and storage notices.
@@ -84,7 +83,7 @@ def build(ctx: Ctx) -> Agent:
         role="the person who gets supplements approved, rentals extended and total-loss conversations handled without a fight",
         instructions=INSTRUCTIONS,
         tools=[supplement_request, total_loss_check, rental_extension, storage_notice, carrier_rule],
-        keywords=["insurance", "insurer", "carrier", "adjuster", "claim", "total loss", "totaled", "acv", "rental extension", "storage", "drp", "desk review", "appraiser", "deductible", "approval"],
+        keywords=["insurance", "insurer", "carrier", "adjuster", "claim", "total loss", "totaled", "is it a total", "valued at", "acv", "rental extension", "storage", "drp", "desk review", "appraiser", "approval", "supplement request", "draft the supplement", "supplement email", "send the supplement"],
         examples=["Repair is $14,200 on a RAV4 the carrier valued at $17,500. Is it a total?", "Draft the supplement for 26-1042 from the audit findings."],
         shop=ctx.shop,
     )

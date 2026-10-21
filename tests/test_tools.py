@@ -88,13 +88,19 @@ class PartsTests(unittest.TestCase):
         ptype, why = parts_tools.recommend_part_type(line, model_year=2015, carrier_rule=rule, today=TODAY)
         self.assertEqual(ptype, "oem")
 
-    def test_cosmetic_aftermarket_on_older_vehicle(self):
-        line = EstimateLine(line=1, operation="replace", description="Front bumper cover")
+    def test_structured_carrier_rule_decides_part_type(self):
         rule = config.carrier_rule(shop(), "Example Mutual")
-        ptype, _ = parts_tools.recommend_part_type(line, model_year=2019, carrier_rule=rule, today=TODAY)
-        self.assertEqual(ptype, "aftermarket")
-        ptype, _ = parts_tools.recommend_part_type(line, model_year=2026, carrier_rule=rule, today=TODAY)
-        self.assertEqual(ptype, "oem")
+        bumper = EstimateLine(line=1, operation="replace", description="Front bumper cover")
+        self.assertEqual(parts_tools.recommend_part_type(bumper, model_year=2019, carrier_rule=rule, today=TODAY)[0], "aftermarket")
+        self.assertEqual(parts_tools.recommend_part_type(bumper, model_year=2026, carrier_rule=rule, today=TODAY)[0], "oem")   # too new
+        # Sample Insurance allows aftermarket on bumper covers and lamps only: a fender stays OEM even on an old truck
+        sample = config.carrier_rule(shop(), "Sample Insurance")
+        fender = EstimateLine(line=2, operation="replace", description="RT fender")
+        self.assertEqual(parts_tools.recommend_part_type(fender, model_year=2015, carrier_rule=sample, today=TODAY)[0], "oem")
+        self.assertEqual(parts_tools.recommend_part_type(bumper, model_year=2015, carrier_rule=sample, today=TODAY)[0], "aftermarket")
+        # free text alone never unlocks aftermarket
+        loose = {"name": "Loose Co", "parts_preference": "aftermarket everything"}
+        self.assertEqual(parts_tools.recommend_part_type(bumper, model_year=2010, carrier_rule=loose, today=TODAY)[0], "oem")
 
     def test_status_flags_late_parts(self):
         ro = store().get("26-1042")
@@ -147,11 +153,21 @@ class CustomerTests(unittest.TestCase):
         d = customer_tools.stage_update(ro, shop(), "ready")
         self.assertIn("$1,000 deductible", d["text"])
 
-    def test_delay_notice_mentions_rental_when_insured(self):
+    def test_delay_notice_never_claims_extension_was_requested(self):
         ro = store().get("26-1042")
         d = customer_tools.delay_notice(ro, shop(), "the bumper cover is on backorder", "2026-10-30")
         self.assertIn("rental", d["text"].lower())
+        self.assertNotIn("we've asked", d["text"].lower())
         self.assertIn("Oct 30", d["text"])
+
+    def test_delivered_text_uses_profile_warranty_only(self):
+        sh = shop()
+        ro = store().get("26-1033")
+        with_w = customer_tools.stage_update(ro, sh, "delivered")["text"]
+        self.assertIn("Limited lifetime warranty", with_w)
+        sh["shop"]["warranty"] = ""
+        without = customer_tools.stage_update(ro, sh, "delivered")["text"]
+        self.assertNotIn("warranty", without.lower())
 
     def test_review_reply_guidelines(self):
         self.assertTrue(any("offline" in g for g in customer_tools.review_reply_guidelines(2)))
@@ -162,8 +178,18 @@ class InsurerTests(unittest.TestCase):
         r = insurer_tools.total_loss_check(14200, 17500, "MD")
         self.assertEqual(r["threshold_pct"], 75)
         self.assertTrue(r["likely_total_loss"])
+        self.assertIn("unverified", r["rule_source"])
         r = insurer_tools.total_loss_check(12000, 17500, "MD")
         self.assertFalse(r["likely_total_loss"])
+
+    def test_shop_profile_rule_overrides_table(self):
+        sh = shop()
+        sh["shop"]["state"], sh["shop"]["total_loss_rule"] = "OH", "80"
+        r = insurer_tools.total_loss_check(8500, 10000, "OH", shop=sh)
+        self.assertEqual(r["threshold_pct"], 80.0)
+        self.assertTrue(r["likely_total_loss"])
+        self.assertIn("shop.toml", r["rule_source"])
+        self.assertEqual(insurer_tools.total_loss_check(8500, 10000, "OH")["rule"], "TLF")   # table, no override
 
     def test_tlf_state_needs_salvage(self):
         r = insurer_tools.total_loss_check(9000, 12000, "CA")
@@ -176,7 +202,13 @@ class InsurerTests(unittest.TestCase):
         items = [{"description": "Radiator support", "labor_hours": 4.5, "labor_type": "body", "paint_hours": 0, "part_price": 610, "justification": "Bent; photo 12"}]
         mail = insurer_tools.supplement_request(ro, shop(), items)
         self.assertIn("EM-2026-778812", mail["subject"])
+        self.assertIn("Supplement #1", mail["subject"])
         self.assertEqual(mail["total"], f"{4.5 * 58 + 610:.2f}")
+        self.assertIn("found on teardown", mail["body"])
+        self.assertNotIn("per OEM repair procedures", mail["body"])
+        cover = insurer_tools.supplement_request(ro, shop(), [{"description": "Cover car for overspray", "labor_hours": 0.5, "labor_type": "refinish"}], supplement_number=2)
+        self.assertIn("not-included operation", cover["body"])
+        self.assertIn("Supplement #2", cover["subject"])
 
     def test_storage_notice(self):
         n = insurer_tools.storage_notice(store().get("26-1042"), shop(), 4, today=TODAY)
@@ -202,6 +234,35 @@ class StoreTests(unittest.TestCase):
             s.set_stage("26-1047", "nonsense")
         with self.assertRaises(KeyError):
             s.require("99-9999")
+
+    def test_ro_numbers_never_reused_and_insert_refuses_overwrite(self):
+        from mab_agents.models import Customer, RepairOrder, Vehicle
+
+        s = store()
+        self.assertEqual(s.next_ro_number("26"), "26-1052")
+        new = RepairOrder(ro_number="26-1033", customer=Customer(name="X"), vehicle=Vehicle(year=2020, make="Kia", model="Soul"))
+        with self.assertRaises(ValueError):
+            s.insert(new)
+        self.assertEqual(s.get("26-1033").customer.name, "Ellen Ortiz")
+
+    def test_concurrent_notes_are_not_lost(self):
+        import tempfile
+        import threading
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as d:
+            s = Store(Path(d) / "c.db")
+            s.load_sample(today=TODAY)
+            before = len(s.get("26-1047").notes)
+
+            def work(i):
+                for k in range(10):
+                    s.add_note("26-1047", f"t{i}-{k}")
+
+            threads = [threading.Thread(target=work, args=(i,)) for i in range(8)]
+            [t.start() for t in threads]
+            [t.join() for t in threads]
+            self.assertEqual(len(s.get("26-1047").notes), before + 80)
 
     def test_sample_dates_rebased(self):
         s = Store(":memory:")

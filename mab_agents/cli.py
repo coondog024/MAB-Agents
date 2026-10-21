@@ -1,12 +1,14 @@
 """`mab` command line.
 
-Offline commands (no API key): init, agents, ros, ro, stage, audit, adas, board, msg, brief, kpi.
-Model commands (need ANTHROPIC_API_KEY): ask, chat.
+Offline commands (no API key): init, agents, ros, ro, stage, audit, adas, board, msg, brief, kpi,
+lookup, queue, script, price, kb, serve (the web app; only "Ask" needs a key).
+Model commands (need ANTHROPIC_API_KEY): ask, chat. `mcp` serves the tools to Claude Desktop.
 """
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import sys
 from datetime import date
@@ -20,8 +22,8 @@ from .store import Store
 
 
 def _ctx(args: argparse.Namespace) -> Ctx:
-    today = date.fromisoformat(args.today) if getattr(args, "today", None) else date.today()
-    return Ctx(shop=config.load_shop(), store=Store(), today=today)
+    pinned = date.fromisoformat(args.today) if getattr(args, "today", None) else None
+    return Ctx(shop=config.load_shop(), store=Store(), today=pinned)
 
 
 def _print(obj) -> None:
@@ -38,6 +40,12 @@ def cmd_init(args) -> int:
         print(f"{target} already exists; leaving it.")
     n = Store().load_sample()
     print(f"Loaded {n} sample repair orders into {config.db_path()}.")
+    kdir = config.knowledge_dir(config.load_shop())
+    if not kdir.exists():
+        shutil.copytree(config.PKG_DIR / "data" / "knowledge", kdir)
+        print(f"Created {kdir}/ with the starter front-desk playbook and glossary. Add your PDFs there.")
+    stats = _ctx(args).kb().sync()
+    print(f"Knowledge base: {len(stats['added'])} added, {len(stats['updated'])} updated, {stats['unchanged']} unchanged.")
     if not Path(".env").exists():
         print("No .env found. Copy .env.example and add ANTHROPIC_API_KEY to use `mab ask` / `mab chat`.")
     return 0
@@ -155,6 +163,111 @@ def cmd_kpi(args) -> int:
     return 0
 
 
+def cmd_lookup(args) -> int:
+    from .tools import frontdesk_tools
+
+    ctx = _ctx(args)
+    rows = ctx.store.find(args.query)
+    if not rows:
+        print("No match.")
+        return 1
+    for ro in rows:
+        s = frontdesk_tools.ro_summary(ro, ctx.today)
+        print(f"{s['ro']}  {s['customer']:<18} {s['phone']:<14} {s['vehicle']:<24} {s['stage_label']:<26} {s['insurer']:<16} promised {s['promised'] or 'TBD'}")
+    return 0
+
+
+def cmd_queue(args) -> int:
+    from .tools import frontdesk_tools
+
+    ctx = _ctx(args)
+    q = frontdesk_tools.update_queue(ctx.store.list(), ctx.store.last_messages(), today=ctx.today)
+    if not q:
+        print("Everyone is up to date.")
+    for x in q:
+        print(f"[P{x['priority']}] {x['ro']} {x['customer']} ({x['phone']}) {x['vehicle']} - {x['stage']}{' RENTAL' if x['rental'] else ''}")
+        for r in x["reasons"]:
+            print(f"      - {r}")
+    return 0
+
+
+def cmd_script(args) -> int:
+    from .tools import frontdesk_tools
+
+    s = frontdesk_tools.phone_script(args.situation)
+    if "error" in s:
+        print(s["error"])
+        return 1
+    print(f"== {s['title']}")
+    for section in ("ask", "say", "never"):
+        if s.get(section):
+            print(f"\n{section.upper()}:")
+            for line in s[section]:
+                print(f"  - {line}")
+    print(f"\nTHEN: {s['then']}")
+    return 0
+
+
+def cmd_price(args) -> int:
+    from .tools import parts_tools
+
+    ctx = _ctx(args)
+    _print(parts_tools.price_part(args.list_price, args.type, ctx.shop, cost=args.cost, max_markup=args.max_markup))
+    return 0
+
+
+def cmd_kb(args) -> int:
+    ctx = _ctx(args)
+    kb = ctx.kb()
+    if args.kb_cmd == "sync":
+        st = kb.sync()
+        print(f"added {len(st['added'])}, updated {len(st['updated'])}, removed {len(st['removed'])}, unchanged {st['unchanged']}, new passages {st['chunks']}")
+        for x in st["added"] + st["updated"]:
+            print(f"  + {x}")
+        for x in st["skipped"]:
+            print(f"  skipped {x}")
+        return 0
+    if args.kb_cmd == "list":
+        for d in kb.documents():
+            print(f"{d['path']:<50} {d['pages']:>4} pages {d['chunks']:>5} passages  synced {d['synced_at'][:16]}")
+        return 0
+    if args.kb_cmd == "search":
+        hits = kb.search(args.query, args.k)
+        if not hits:
+            print("Nothing matched.")
+            return 1
+        for h in hits:
+            print(f"--- {h.title} ({h.path}, page {h.page}) score {h.score}\n    …{h.snippet}…\n{h.text[:600]}\n")
+        return 0
+    return 2
+
+
+def cmd_serve(args) -> int:
+    from . import web
+
+    ctx = _ctx(args)
+    if ctx.shop.get("_is_example"):
+        print("warning: no shop.toml found here; serving the example shop profile. Run `mab init` in the shop's folder first.", file=sys.stderr)
+    httpd = web.serve(ctx, host=args.host, port=args.port)
+    shown_host = "localhost" if args.host in {"127.0.0.1", "localhost", "::1"} else args.host
+    print(f"Front desk app: http://{shown_host}:{args.port}/?token={httpd.token}")
+    print("Open that exact link once per browser (bookmark it); a cookie keeps you signed in. Ctrl-C to stop.")
+    if args.host not in {"127.0.0.1", "localhost", "::1"}:
+        print("Listening on the network over plain HTTP: keep this on the shop's private Wi-Fi, not a guest network.", file=sys.stderr)
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    return 0
+
+
+def cmd_mcp(args) -> int:
+    from . import mcp_server
+
+    mcp_server.run(_ctx(args))
+    return 0
+
+
 # ---- model commands -------------------------------------------------------------
 def _trace(name: str, inp: dict) -> None:
     print(f"  ↳ {name}({', '.join(f'{k}={str(v)[:40]!r}' for k, v in inp.items())})", file=sys.stderr)
@@ -217,6 +330,14 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("msg", help="draft a customer message"); s.add_argument("ro"); s.add_argument("--stage"); s.add_argument("--delay", help="reason"); s.add_argument("--date"); s.add_argument("--review", action="store_true"); s.set_defaults(fn=cmd_msg)
     sub.add_parser("brief", help="morning brief (offline)").set_defaults(fn=cmd_brief)
     sub.add_parser("kpi", help="shop KPIs (offline)").set_defaults(fn=cmd_kpi)
+    s = sub.add_parser("lookup", help="find a customer by phone, name, RO or vehicle"); s.add_argument("query"); s.set_defaults(fn=cmd_lookup)
+    sub.add_parser("queue", help="who needs a call or text today").set_defaults(fn=cmd_queue)
+    s = sub.add_parser("script", help="phone script for a situation"); s.add_argument("situation"); s.set_defaults(fn=cmd_script)
+    s = sub.add_parser("price", help="price a part through the shop matrix"); s.add_argument("list_price", type=float); s.add_argument("--type", default="oem"); s.add_argument("--cost", type=float); s.add_argument("--max-markup", type=float, dest="max_markup"); s.set_defaults(fn=cmd_price)
+    s = sub.add_parser("kb", help="knowledge base: sync | search | list"); kb = s.add_subparsers(dest="kb_cmd", required=True)
+    kb.add_parser("sync"); kb.add_parser("list"); ks = kb.add_parser("search"); ks.add_argument("query"); ks.add_argument("-k", type=int, default=5); s.set_defaults(fn=cmd_kb)
+    s = sub.add_parser("serve", help="run the front-desk web app"); s.add_argument("--host", default="127.0.0.1"); s.add_argument("--port", type=int, default=8765); s.set_defaults(fn=cmd_serve)
+    sub.add_parser("mcp", help="serve the shop tools to Claude Desktop over MCP (stdio)").set_defaults(fn=cmd_mcp)
     s = sub.add_parser("ask", help="ask the fleet (routes to an agent)"); s.add_argument("question"); s.add_argument("--agent", choices=[m.__name__.split(".")[-1] for m in fleet_mod.MODULES]); s.add_argument("-v", "--verbose", action="store_true"); s.set_defaults(fn=cmd_ask)
     s = sub.add_parser("chat", help="multi-turn chat with one agent"); s.add_argument("agent", choices=[m.__name__.split(".")[-1] for m in fleet_mod.MODULES]); s.add_argument("-v", "--verbose", action="store_true"); s.set_defaults(fn=cmd_chat)
     return p

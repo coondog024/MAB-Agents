@@ -23,7 +23,7 @@ STAGE_TEMPLATES: dict[str, str] = {
     "reassembly": "Hi {first}, paint is done on your {vehicle} and it's being reassembled. Final step is a quality inspection and a systems scan. Target completion {promised}.",
     "qc": "Hi {first}, your {vehicle} is in final inspection and detail. We expect it ready {promised}. We'll confirm pickup time soon.",
     "ready": "Hi {first}, great news: your {vehicle} is ready! Pick up anytime {hours}. {deductible_note}Please bring your rental back the same day if you have one. Call {phone} with questions.",
-    "delivered": "Hi {first}, thanks for trusting {shop} with your {vehicle}. Your repairs carry our written lifetime warranty. If anything doesn't look right, call {phone} and we'll make it right.",
+    "delivered": "Hi {first}, thanks for trusting {shop} with your {vehicle}. {warranty_note}If anything doesn't look right, call {phone} and we'll make it right.",
 }
 
 DELAY_TEMPLATE = "Hi {first}, quick update on your {vehicle}: {reason}. Your new target completion is {new_date}. Sorry for the delay. We'll keep you posted. {rental_note}- {shop}"
@@ -49,7 +49,9 @@ def _ctx(ro: RepairOrder, shop: dict[str, Any], **extra: Any) -> dict[str, Any]:
         "date": _fmt(ro.dropped_off) if ro.dropped_off else "your scheduled date",
         "deductible_note": deductible_note,
         "review_url": s.get("review_url", ""),
-        "rental_note": "We've asked the insurer to extend your rental. " if ro.rental and ro.insurer else "",
+        # Never claim the extension was requested: the front desk may not have called yet.
+        "rental_note": "If you're in a rental, please check your covered days with your insurance company; we'll support the extension request. " if ro.rental and ro.insurer else "",
+        "warranty_note": f"{s['warranty'].rstrip('.')}. " if s.get("warranty") else "",
     }
     ctx.update(extra)
     return ctx
@@ -106,7 +108,7 @@ def review_request(ro: RepairOrder, shop: dict[str, Any]) -> dict[str, Any]:
 def review_reply_guidelines(stars: int) -> list[str]:
     base = ["Thank the reviewer by first name only.", "Never mention claim numbers, insurers or repair details publicly.", "Sign with the manager's first name and the shop name."]
     if stars >= 4:
-        return base + ["Mention one specific thing they praised.", "Invite them back and mention the lifetime warranty."]
+        return base + ["Mention one specific thing they praised.", "Invite them back; mention the warranty only as worded in the shop profile."]
     return base + [
         "Apologize without arguing; acknowledge the specific frustration.",
         "Take it offline: give the manager's direct line and ask them to call.",

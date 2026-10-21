@@ -1,10 +1,9 @@
 """Production Manager: keeps cars moving and promise dates honest."""
 from __future__ import annotations
 
-from anthropic import beta_tool
 
 from ..tools import schedule_tools
-from .base import Agent, Ctx, j
+from .base import Agent, Ctx, beta_tool, j
 
 INSTRUCTIONS = """
 You run the production floor. Your two numbers are touch time (labor hours per calendar day a car is in the shop) and keys-to-keys cycle time; the shop targets are in the profile.
@@ -79,7 +78,7 @@ def build(ctx: Ctx) -> Agent:
         role="the floor manager who keeps every car moving and every promise date honest",
         instructions=INSTRUCTIONS,
         tools=[wip_board, stalled_ros, promise_date, move_stage, tech_load],
-        keywords=["production", "schedule", "wip", "stalled", "cycle time", "touch time", "promise", "delivery date", "when will", "bottleneck", "paint booth", "move", "stage", "board", "capacity", "tech"],
+        keywords=["production", "schedule", "wip", "stalled", "cycle time", "touch time", "promise", "delivery date", "when will", "bottleneck", "paint booth", "move", "stage", "board", "capacity", "tech", "floor", "focus on today", "to paint", "to body", "to reassembly"],
         examples=["What should the floor focus on today?", "Move 26-1047 to paint and give me the customer text."],
         shop=ctx.shop,
     )

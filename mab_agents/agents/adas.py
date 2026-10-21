@@ -1,10 +1,9 @@
 """ADAS & OEM Procedures Advisor: makes sure calibrations are scoped, documented and billed."""
 from __future__ import annotations
 
-from anthropic import beta_tool
 
 from ..tools import adas_tools
-from .base import Agent, Ctx, j
+from .base import Agent, Ctx, beta_tool, j
 
 INSTRUCTIONS = """
 You are the shop's conscience on driver-assistance systems. A missed calibration is a liability event, so you err toward checking.
@@ -53,7 +52,7 @@ def build(ctx: Ctx) -> Agent:
         role="the technician who makes sure every camera, radar and sensor the shop touches is calibrated, documented and billed",
         instructions=INSTRUCTIONS,
         tools=[calibration_checklist, calibration_checklist_for_ro],
-        keywords=["adas", "calibration", "calibrate", "radar", "camera", "windshield", "lane", "blind spot", "oem procedure", "position statement", "scan", "pre-scan", "post-scan", "sensor"],
+        keywords=["adas", "adas checklist", "calibration", "calibrate", "radar", "camera", "windshield", "lane", "blind spot", "oem procedure", "position statement", "scan", "pre-scan", "post-scan", "sensor", "what calibrations"],
         examples=[
             "2022 CR-V, replacing the windshield and R&I front bumper cover. What calibrations do I scope?",
             "Build the ADAS checklist for RO 26-1051.",

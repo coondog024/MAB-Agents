@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Front Desk</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1b1d21;--muted:#6b7280;--line:#e5e7eb;--accent:#0b5fff;--warn:#b45309;--bad:#b91c1c;--ok:#15803d}
+@media (prefers-color-scheme:dark){:root{--bg:#111318;--card:#1a1d24;--fg:#e8eaee;--muted:#9aa1ad;--line:#2a2f3a;--accent:#7aa7ff;--warn:#f59e0b;--bad:#f87171;--ok:#4ade80}}
+*{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,sans-serif;background:var(--bg);color:var(--fg)}
+header{display:flex;gap:12px;align-items:center;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2;flex-wrap:wrap}
+header h1{font-size:1.05rem;margin:0 8px 0 0}nav{display:flex;gap:4px;flex-wrap:wrap}
+nav button{border:1px solid var(--line);background:transparent;color:var(--fg);padding:6px 10px;border-radius:8px;cursor:pointer}
+nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+main{max-width:1100px;margin:0 auto;padding:16px}section{display:none}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+input,select,textarea{font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);min-width:0}
+textarea{width:100%;min-height:90px}button.act{font:inherit;padding:8px 12px;border-radius:8px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{font:inherit;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer}
+.muted{color:var(--muted)}.p1{border-left:4px solid var(--bad)}.p2{border-left:4px solid var(--warn)}.p3{border-left:4px solid var(--line)}
+.draft{white-space:pre-wrap;background:var(--bg);border:1px dashed var(--line);border-radius:8px;padding:10px;margin:8px 0}
+table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.tag{display:inline-block;font-size:.8rem;padding:2px 8px;border-radius:999px;border:1px solid var(--line);margin-right:4px}
+.chat{display:flex;flex-direction:column;gap:8px}.msg{padding:10px 12px;border-radius:10px;max-width:90%;white-space:pre-wrap}
+.me{align-self:flex-end;background:var(--accent);color:#fff}.bot{align-self:flex-start;background:var(--bg);border:1px solid var(--line)}
+code{background:var(--bg);padding:1px 4px;border-radius:4px}label{display:flex;gap:6px;align-items:center}
+h2{font-size:1.05rem;margin:0 0 10px}h3{font-size:.95rem;margin:12px 0 6px}ul{margin:6px 0;padding-left:20px}
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:8px;display:none;max-width:90vw}
+#toast.err{background:var(--bad);color:#fff}
+</style>
+</head>
+<body>
+<header><h1 id="shopname">Front Desk</h1>
+<nav>
+<button data-tab="today" class="on">Today</button><button data-tab="customer">Customer</button><button data-tab="checkin">Check-in</button>
+<button data-tab="scripts">Scripts</button><button data-tab="parts">Parts</button><button data-tab="kb">Knowledge</button><button data-tab="ask">Ask the fleet</button>
+</nav><span id="status" class="muted" style="margin-left:auto"></span></header>
+<main>
+
+<section id="today" class="on">
+<div class="grid">
+<div class="card"><h2>Who needs a call or text today</h2><p class="muted" style="margin-top:-6px">Work top to bottom. Draft, read it, send it from the shop phone, then Mark sent.</p><div id="queue" class="muted">Loading…</div></div>
+<div class="card"><h2>Shop at a glance</h2><div id="brief" class="muted">Loading…</div>
+<h3>Opening routine</h3><ul id="routine"></ul></div>
+</div>
+<div class="card"><h2>Where every car is</h2><div id="board"></div></div>
+</section>
+
+<section id="customer">
+<div class="card"><h2>Look up a customer</h2>
+<div class="row"><input id="lq" placeholder="phone, name, RO number or vehicle" size="36"><button class="act" data-act="lookup">Find</button></div>
+<div id="lres"></div></div>
+<div id="rodetail"></div>
+</section>
+
+<section id="checkin">
+<div class="card"><h2>New repair order</h2>
+<form id="intake" class="grid">
+<input name="customer_name" placeholder="Customer name" required><input name="phone" placeholder="Mobile (for texts)" required>
+<input name="email" placeholder="Email (optional)"><input name="year" placeholder="Year" type="number" min="1980" max="2030" required>
+<input name="make" placeholder="Make" required><input name="model" placeholder="Model" required>
+<input name="vin" placeholder="VIN (optional)"><input name="insurer" placeholder="Insurance company (blank = customer pay)">
+<input name="claim_number" placeholder="Claim number"><input name="deductible" placeholder="Deductible $ (0 if unknown)" type="number" step="1" min="0">
+<label>Drop-off date <input name="scheduled_for" type="date"></label>
+<textarea name="loss_description" placeholder="What happened and where the damage is" required></textarea>
+<label><input type="checkbox" name="drivable" checked> Drivable (no warning lights, leaks, wheel damage)</label>
+<label><input type="checkbox" name="rental"> Needs a rental</label>
+<label><input type="checkbox" name="airbags_deployed"> Airbags deployed</label>
+<div><button class="act" type="submit">Create RO</button></div>
+</form><div id="intakeres"></div></div>
+<div class="card"><h2>Check-in checklist</h2><ul id="ckl"></ul></div>
+<div class="card"><h2>Delivery checklist</h2><ul id="dkl"></ul></div>
+</section>
+
+<section id="scripts">
+<div class="card"><h2>What do I say when…</h2><div id="scriptlist" class="row"></div><div id="script"></div></div>
+</section>
+
+<section id="parts">
+<div class="grid">
+<div class="card"><h2>Price a part</h2><p class="muted" style="margin-top:-6px">OEM: enter the dealer list price. Aftermarket / recycled: enter the vendor's quote as the price.</p>
+<div class="row"><input id="pl" placeholder="List / quoted price" type="number" step="0.01" min="0"><select id="pt"><option>oem</option><option>aftermarket</option><option>recycled</option><option>reconditioned</option><option>sublet</option></select>
+<input id="pc" placeholder="Our cost (optional)" type="number" step="0.01" min="0"><button class="act" data-act="price">Price</button></div><div id="pres"></div></div>
+<div class="card"><h2>Compare quotes</h2><p class="muted" style="margin-top:-6px">One per line: <b>vendor, type, our cost, days or date, notes</b>. Type is oem, aftermarket or recycled.</p>
+<textarea id="quotes">Toyota dealer, oem, 309.00, 2, in stock
+Keystone, aftermarket, 189.00, 5, CAPA
+eBay seller, aftermarket, 160.00, 10/28, no returns</textarea>
+<div class="row"><input id="qlist" placeholder="OEM list price (optional)" type="number" step="0.01" min="0"><label><input type="checkbox" id="qrental" checked> Customer in a rental</label><label><input type="checkbox" id="qsafety"> Safety/structural part</label><button class="act" data-act="compare">Rank</button></div><div id="qres"></div></div>
+</div>
+<div class="card"><h2>Source a part online</h2><p class="muted" style="margin-top:-6px">Asks the Parts agent to search dealer sites, RockAuto, Amazon and eBay. Needs the API key. It never orders anything.</p>
+<div class="row"><input id="src" size="60" placeholder="e.g. 2021 Toyota RAV4 front bumper cover 52119-0R918, customer in a rental"><button class="act" data-act="source">Search</button></div><div id="srcres" class="chat"></div></div>
+</section>
+
+<section id="kb">
+<div class="card"><h2>Search the shop's documents</h2>
+<div class="row"><input id="kq" size="40" placeholder="deductible policy, blend not included, pre-repair scan…"><button class="act" data-act="kbsearch">Search</button></div>
+<div id="kres"></div><h3>Documents loaded</h3><div id="kdocs" class="muted"></div>
+<p class="muted">The manager adds PDFs, .md or .txt files to the <code>knowledge/</code> folder and runs <code>mab kb sync</code>.</p></div>
+<div class="card"><h2>Save a note</h2><p class="muted" style="margin-top:-6px">For example an email from an adjuster about rental limits. It becomes searchable for everyone.</p><input id="ntitle" placeholder="Title" size="50"><textarea id="ntext" placeholder="Paste the text"></textarea><button class="act" data-act="kbnote">Save to knowledge</button></div>
+</section>
+
+<section id="ask">
+<div class="card"><h2>Ask the fleet</h2><p class="muted" style="margin-top:-6px">Type it the way you'd ask a coworker. The right agent answers from the shop's own playbook and repair orders.</p>
+<div class="row"><select id="agent"><option value="">Auto-route</option></select><input id="q" size="60" placeholder="A customer is asking why she pays the deductible to us. What do I say?"><button class="act" data-act="ask">Ask</button></div>
+<div id="chat" class="chat" style="margin-top:12px"></div></div>
+</section>
+</main>
+<div id="toast"></div>
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'$'+Number(n||0).toFixed(2);
+const session=Math.random().toString(36).slice(2);
+const drafts={};          // message id -> {ro, text, to}; never put message text inside HTML attributes
+let currentRO=null;
+async function api(p,b){
+  let r,j;
+  try{ r=await fetch(p,b?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}:undefined); j=await r.json(); }
+  catch(e){ toast('Lost connection to the front-desk server. Is `mab serve` still running?',true); throw e; }
+  if(!r.ok){ toast(j.error||('Error '+r.status),true); throw new Error(j.error||r.status); }
+  return j;
+}
+function toast(t,err){const e=$('#toast');e.textContent=t;e.className=err?'err':'';e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',err?4500:1800)}
+function copyText(t){navigator.clipboard.writeText(t).then(()=>toast('Copied'),()=>toast('Could not copy; select the text and copy it',true))}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.tab));if(b.dataset.tab==='today')today();if(b.dataset.tab==='kb')kbDocs()});
+
+// ---- drafts: rendered by id, handled by delegation ------------------------------------------
+function draftBox(d,ro){
+  if(d.id==null){ d.id='tmp'+Math.random().toString(36).slice(2); }
+  drafts[d.id]={ro,text:d.text,to:d.to||''};
+  return `<div class="draft">${esc(d.text)}</div><div class="row"><button class="ghost" data-act="copy" data-id="${esc(d.id)}">Copy</button><button class="ghost" data-act="sent" data-id="${esc(d.id)}">Mark sent</button><span class="muted">to ${esc(d.to||'')}</span></div>`;
+}
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('[data-act]'); if(!b) return;
+  const act=b.dataset.act, id=b.dataset.id, d=id?drafts[id]:null;
+  try{
+    if(act==='copy'&&d) copyText(d.text);
+    else if(act==='sent'&&d){ await api('/api/sent',{ro:d.ro,id:String(id).startsWith('tmp')?null:Number(id),text:d.text}); toast('Logged as sent'); today(); if(currentRO===d.ro) openRO(d.ro); }
+    else if(act==='lookup') lookup();
+    else if(act==='open') openRO(b.dataset.ro);
+    else if(act==='draft'){ const dd=await api('/api/message',{ro:b.dataset.ro,kind:'stage',stage:b.dataset.stage}); b.closest('.card').querySelector('.draftslot').innerHTML=draftBox(dd,b.dataset.ro); }
+    else if(act==='delay'){ const dd=await delayFlow(b.dataset.ro); if(dd) b.closest('.card').querySelector('.draftslot').innerHTML=draftBox(dd,b.dataset.ro); }
+    else if(act==='msg'){ const dd=await msgFor(b.dataset.ro,b.dataset.kind); if(dd){ $('#msgbox').innerHTML=draftBox(dd,b.dataset.ro); if(b.dataset.kind==='delay') openRO(b.dataset.ro,dd);} }
+    else if(act==='move') moveStage(b.dataset.ro);
+    else if(act==='note') addNote(b.dataset.ro);
+    else if(act==='script') script(b.dataset.key);
+    else if(act==='price') pricePart();
+    else if(act==='compare') compareQuotes();
+    else if(act==='source') ask($('#src').value,'parts','srcres');
+    else if(act==='kbsearch') kbSearch();
+    else if(act==='kbnote') kbNote();
+    else if(act==='ask') ask($('#q').value,$('#agent').value,'chat');
+  }catch(err){ /* api() already showed the toast */ }
+});
+async function delayFlow(ro){
+  const reason=prompt('Why is it delayed? Plain words, e.g. "the bumper cover is on backorder"'); if(!reason) return null;
+  const date=prompt('New target date (YYYY-MM-DD)'); if(!date) return null;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){ toast('Date must look like 2026-10-28',true); return null; }
+  return api('/api/message',{ro,kind:'delay',reason,date});
+}
+async function msgFor(ro,kind){
+  if(kind==='delay') return delayFlow(ro);
+  if(kind==='supplement'){ const what=prompt('What did we find? Plain words, e.g. "a bent radiator support"'); if(!what) return null; const days=prompt('About how many extra days?','2'); return api('/api/message',{ro,kind,what,days:Number(days)||2}); }
+  return api('/api/message',{ro,kind});
+}
+
+// ---- today ----------------------------------------------------------------------------------
+async function today(){
+  try{const h=await api('/api/health');$('#shopname').textContent=h.shop+' · Front Desk';$('#status').textContent=h.today+(h.model_ready?'':' · no API key: "Ask" is off, everything else works');}catch(e){return}
+  const q=await api('/api/queue');
+  $('#queue').innerHTML=q.length?q.map(x=>{
+    const overdue=x.reasons.some(r=>/^Promised .* has passed/.test(r));
+    return `<div class="card p${x.priority}"><b>${esc(x.customer)}</b> · ${esc(x.vehicle)} · <span class="tag">${esc(x.stage)}</span>${x.rental?'<span class="tag">rental</span>':''}<div class="muted">${esc(x.phone)} · RO ${esc(x.ro)}</div><ul>${x.reasons.map(r=>`<li>${esc(r)}</li>`).join('')}</ul><div class="row">${overdue?`<button class="ghost" data-act="delay" data-ro="${esc(x.ro)}">Delay text (new date)</button>`:`<button class="ghost" data-act="draft" data-ro="${esc(x.ro)}" data-stage="${esc(x.suggested_text_stage)}">Draft status text</button>`}<button class="ghost" data-act="open" data-ro="${esc(x.ro)}">Open RO</button></div><div class="draftslot"></div></div>`}).join(''):'<span class="muted">Everyone is up to date.</span>';
+  const b=await api('/api/brief');$('#brief').innerHTML=`<p>${esc(b.headline)}</p><table><tr><td>Rentals running</td><td>${b.rentals_open}</td></tr><tr><td>Labor hours on the floor</td><td>${b.hours_in_production}</td></tr><tr><td>Waiting on insurer approval</td><td>${b.waiting_on_approval.map(esc).join(', ')||'–'}</td></tr><tr><td>Past the promised date</td><td>${b.overdue.map(esc).join(', ')||'–'}</td></tr></table>`;
+  const c=await api('/api/checklists');$('#routine').innerHTML=c.routine.opening.map(s=>`<li>${esc(s)}</li>`).join('');$('#ckl').innerHTML=c.checkin.map(s=>`<li>${esc(s)}</li>`).join('');$('#dkl').innerHTML=c.delivery.map(s=>`<li>${esc(s)}</li>`).join('');
+  const bd=await api('/api/board');$('#board').innerHTML=Object.values(bd.stages).map(s=>`<h3>${esc(s.label)}</h3><table>${s.ros.map(r=>`<tr><td><button class="ghost" data-act="open" data-ro="${esc(r.ro)}">${esc(r.ro)}</button></td><td>${esc(r.vehicle)}</td><td>${esc(r.customer)}</td><td>${r.labor_hours} h</td><td>day ${r.days_in_shop}</td><td>${r.rental?'<span class="tag">rental</span>':''}</td></tr>`).join('')}</table>`).join('')||'<span class="muted">No open repair orders.</span>';
+}
+
+// ---- customer -------------------------------------------------------------------------------
+async function lookup(){
+  const q=$('#lq').value.trim(); if(!q){toast('Type a phone number, name or RO number',true);return}
+  const r=await api('/api/lookup?q='+encodeURIComponent(q));
+  $('#lres').innerHTML=r.length?`<table>${r.map(x=>`<tr><td><button class="ghost" data-act="open" data-ro="${esc(x.ro)}">${esc(x.ro)}</button></td><td>${esc(x.customer)}<br><span class="muted">${esc(x.phone)}</span></td><td>${esc(x.vehicle)}</td><td><span class="tag">${esc(x.stage_label)}</span></td><td>${esc(x.insurer)}</td><td>target ${esc(x.promised||'not set yet')}</td></tr>`).join('')}</table>`:'<p class="muted">No match. Try the phone number or the RO number.</p>';
+}
+async function openRO(ro,keepDraft){
+  document.querySelector('[data-tab=customer]').click();
+  currentRO=ro;
+  const d=await api('/api/ro/'+encodeURIComponent(ro)); const s=d.summary,p=d.payment,ps=d.parts_status; const stages=await api('/api/stages');
+  $('#rodetail').innerHTML=`<div class="card"><h2>${esc(s.customer)} · ${esc(s.vehicle)} · RO ${esc(s.ro)}</h2>
+  <div class="row"><span class="tag">${esc(s.stage_label)}</span><span class="tag">${esc(s.insurer)}</span>${s.claim_number?`<span class="tag">claim ${esc(s.claim_number)}</span>`:''}${s.rental?'<span class="tag">rental</span>':''}<span class="muted">day ${s.days_in_shop} in shop · target ${esc(s.promised||'not set yet')}</span></div>
+  <p><b>If they ask what they owe, say:</b> ${esc(p.say)}<br><span class="muted">${esc(p.who_pays)}</span></p>
+  ${ps.total_parts?`<p><b>Parts:</b> ${ps.outstanding.length} still to arrive${ps.late.length?`, <span style="color:var(--bad)">${ps.late.length} past their ETA</span>`:''}${ps.latest_eta?`, latest ETA ${esc(ps.latest_eta)}`:''}</p>`:''}
+  <h3>Send an update</h3><div class="row"><button class="ghost" data-act="msg" data-ro="${esc(ro)}" data-kind="stage">Status text</button><button class="ghost" data-act="msg" data-ro="${esc(ro)}" data-kind="delay">Delay (new date)</button><button class="ghost" data-act="msg" data-ro="${esc(ro)}" data-kind="supplement">Hidden damage found</button><button class="ghost" data-act="msg" data-ro="${esc(ro)}" data-kind="review">Review request</button></div><div id="msgbox"></div>
+  <h3>Move to the next stage</h3><div class="row"><select id="newstage">${stages.map(x=>`<option value="${esc(x.key)}" ${x.key===s.stage?'selected':''}>${esc(x.label)}</option>`).join('')}</select><button class="ghost" data-act="move" data-ro="${esc(ro)}">Move and draft the text</button></div>
+  <h3>Add a note</h3><div class="row"><input id="notetext" size="50" placeholder="Called customer, left voicemail…"><button class="ghost" data-act="note" data-ro="${esc(ro)}">Save</button></div>
+  <h3>History</h3><table>${[...d.notes].reverse().map(n=>`<tr><td class="muted">${esc(n.at.slice(0,16).replace('T',' '))}</td><td>${esc(n.author)}</td><td>${esc(n.text)}</td></tr>`).join('')}</table>
+  <h3>Messages</h3><table>${[...d.messages].reverse().map(m=>`<tr><td class="muted">${esc(m.created_at.slice(0,16).replace('T',' '))}</td><td><span class="tag">${esc(m.status)}</span></td><td>${esc(m.body)}</td></tr>`).join('')||'<tr><td class="muted">none yet</td></tr>'}</table></div>`;
+  if(keepDraft) $('#msgbox').innerHTML=draftBox(keepDraft,ro);
+}
+async function moveStage(ro){const d=await api('/api/stage',{ro,stage:$('#newstage').value});toast('Stage updated');await openRO(ro,d.draft)}
+async function addNote(ro){const t=$('#notetext').value.trim(); if(!t){toast('Type the note first',true);return} await api('/api/note',{ro,text:t});openRO(ro)}
+
+// ---- check-in -------------------------------------------------------------------------------
+$('#intake').addEventListener('submit',async e=>{
+  e.preventDefault();const f=new FormData(e.target);const b=Object.fromEntries(f.entries());for(const k of['drivable','rental','airbags_deployed'])b[k]=f.get(k)==='on';
+  try{const r=await api('/api/intake',b);$('#intakeres').innerHTML=`<div class="card"><b>Created RO ${esc(r.created)}</b> · ${esc(r.next)}${r.deductible?` · deductible ${money(r.deductible)}`:''}<h3>Photos to take at check-in</h3><ul>${r.photos.map(p=>`<li>${esc(p)}</li>`).join('')}</ul><button class="ghost" data-act="open" data-ro="${esc(r.created)}">Open RO</button></div>`;e.target.reset()}catch(err){}
+});
+
+// ---- scripts --------------------------------------------------------------------------------
+async function scripts(){const s=await api('/api/scripts');$('#scriptlist').innerHTML=Object.entries(s).map(([k,v])=>`<button class="ghost" data-act="script" data-key="${esc(k)}">${esc(v)}</button>`).join('')}
+async function script(k){const s=await api('/api/scripts?situation='+encodeURIComponent(k));$('#script').innerHTML=`<div class="card"><h2>${esc(s.title)}</h2>${s.ask.length?`<h3>Ask</h3><ul>${s.ask.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}<h3>Say</h3><ul>${s.say.map(x=>`<li>“${esc(x)}”</li>`).join('')}</ul><h3>Never</h3><ul>${s.never.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><h3>Then</h3><p>${esc(s.then)}</p></div>`}
+
+// ---- parts ----------------------------------------------------------------------------------
+async function pricePart(){
+  const pl=parseFloat($('#pl').value); if(!(pl>0)){toast('Enter the price first',true);return}
+  const b={list_price:pl,part_type:$('#pt').value};if($('#pc').value)b.cost=parseFloat($('#pc').value);
+  const r=await api('/api/parts/price',b);$('#pres').innerHTML=`<table><tr><td>Our cost</td><td>${money(r.cost)}</td></tr><tr><td>We bill</td><td><b>${money(r.sell)}</b></td></tr><tr><td>Gross profit</td><td>${money(r.gross_profit)} (${Math.round((r.gross_profit_pct||0)*100)}%)</td></tr></table><p class="muted">${r.notes.map(esc).join(' · ')}</p>`}
+async function compareQuotes(){
+  const lines=$('#quotes').value.split('\n').map(l=>l.trim()).filter(Boolean); const quotes=[];
+  for(const l of lines){const parts=l.split(',').map(x=>x.trim()); if(parts.length<4){toast(`Each line needs: vendor, type, cost, days or date. Check: "${l}"`,true);return}
+    const [vendor,part_type,price,eta,...notes]=parts; if(!['oem','aftermarket','recycled','reconditioned'].includes(part_type.toLowerCase())){toast(`Type must be oem, aftermarket or recycled. Check: "${l}"`,true);return}
+    quotes.push({vendor,part_type:part_type.toLowerCase(),price:parseFloat(price),eta:/^\d+$/.test(eta)?parseInt(eta):eta,notes:notes.join(', ')})}
+  if(!quotes.length){toast('Enter at least one quote',true);return}
+  const b={quotes,rental:$('#qrental').checked,safety_part:$('#qsafety').checked}; if($('#qlist').value) b.list_price=parseFloat($('#qlist').value);
+  const r=await api('/api/parts/compare',b);
+  $('#qres').innerHTML=`<table><tr><th>#</th><th>Vendor</th><th>Type</th><th>Our cost</th><th>Days</th><th>Delay cost</th><th>Total to job</th><th>We bill</th><th>GP</th></tr>${r.ranked.map(x=>`<tr><td>${x.rank}</td><td>${esc(x.vendor)}</td><td>${esc(x.part_type)}</td><td>${money(x.landed_cost)}</td><td>${x.days_to_arrive}</td><td>${money(x.delay_cost)}</td><td><b>${money(x.total_cost_to_job)}</b></td><td>${money(x.we_bill)}</td><td>${money(x.gross_profit)}</td></tr>`).join('')}</table>${r.ranked.some(x=>x.notes)?`<p class="muted">${r.ranked.filter(x=>x.notes).map(x=>esc(x.vendor+': '+x.notes)).join(' · ')}</p>`:''}${r.dropped.length?`<p class="muted">Left out: ${r.dropped.map(d=>esc(d.vendor+' ('+d.why+')')).join(', ')}</p>`:''}<p class="muted">${esc(r.note)}</p>`}
+
+// ---- knowledge ------------------------------------------------------------------------------
+async function kbSearch(){const q=$('#kq').value.trim(); if(!q){toast('Type what you are looking for',true);return} const r=await api('/api/kb?q='+encodeURIComponent(q));$('#kres').innerHTML=r.results.length?r.results.map(h=>`<div class="card"><div class="muted">${esc(h.title)} · ${esc(h.path)} · page ${h.page}</div><div style="white-space:pre-wrap">${esc(h.text).slice(0,900)}</div></div>`).join(''):'<p class="muted">Nothing matched. Try other words.</p>';kbDocs(r.documents)}
+async function kbDocs(docs){try{if(!docs){docs=(await api('/api/kb?q=')).documents}$('#kdocs').innerHTML=docs.length?docs.map(d=>`${esc(d.title)} <small>(${d.pages} pages, ${d.chunks} passages)</small>`).join(' · '):'No documents yet.'}catch(e){}}
+async function kbNote(){const t=$('#ntitle').value.trim(),x=$('#ntext').value.trim(); if(!t||!x){toast('Give the note a title and some text',true);return} const r=await api('/api/kb/note',{title:t,text:x});toast('Saved '+r.chunks+' passage(s)');$('#ntext').value='';$('#ntitle').value='';kbDocs()}
+
+// ---- ask ------------------------------------------------------------------------------------
+async function agents(){try{const a=await api('/api/agents');$('#agent').innerHTML='<option value="">Auto-route</option>'+a.map(x=>`<option value="${esc(x.key)}">${esc(x.key)}</option>`).join('')}catch(e){}}
+async function ask(question,agent,target){
+  if(!question.trim()){toast('Type a question first',true);return}
+  const box=$('#'+target);const me=document.createElement('div');me.className='msg me';me.textContent=question;box.appendChild(me);
+  const wait=document.createElement('div');wait.className='msg bot muted';wait.textContent='Thinking… (this can take a minute when it checks several things)';box.appendChild(wait);
+  if(target==='chat')$('#q').value='';if(target==='srcres')$('#src').value='';
+  try{const r=await api('/api/ask',{question,agent:agent||undefined,session});wait.className='msg bot';
+    const head=document.createElement('div');head.className='muted';head.style.fontSize='.8rem';head.textContent=r.agent+(r.tool_calls.length?' · used '+r.tool_calls.map(t=>t.name).join(', '):'')+(r.note?' · '+r.note:'');
+    wait.textContent='';wait.appendChild(head);wait.appendChild(document.createTextNode(r.text));
+  }catch(e){wait.className='msg bot';wait.style.color='var(--bad)';wait.textContent=e.message}
+  wait.scrollIntoView({block:'end'});
+}
+$('#q').addEventListener('keydown',e=>{if(e.key==='Enter')ask($('#q').value,$('#agent').value,'chat')});$('#lq').addEventListener('keydown',e=>{if(e.key==='Enter')lookup()});$('#kq').addEventListener('keydown',e=>{if(e.key==='Enter')kbSearch()});$('#src').addEventListener('keydown',e=>{if(e.key==='Enter')ask($('#src').value,'parts','srcres')});
+today();scripts();agents();
+</script>
+</body>
+</html>

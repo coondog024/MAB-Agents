@@ -1,10 +1,9 @@
 """Customer Communications & CSI: every update, delay and review, in plain words."""
 from __future__ import annotations
 
-from anthropic import beta_tool
 
 from ..tools import customer_tools
-from .base import Agent, Ctx, j
+from .base import Agent, Ctx, beta_tool, j
 
 INSTRUCTIONS = """
 You write what the front desk sends to customers. Customers judge a collision shop by communication more than by paint.
