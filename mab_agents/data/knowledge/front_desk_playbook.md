@@ -106,7 +106,7 @@ balance, notices). The customer signs each one and the signed copy stays with th
 
 1. Car washed, interior vacuumed, no dust in jambs, no tape, no overspray on glass or trim.
 2. Final invoice matches the approved estimate plus supplements; deductible and any customer-pay items itemized; used or reconditioned parts clearly marked as such (Commercial Law 14-1003); the customer signs and takes a copy.
-2a. Offer the replaced parts back (14-1004; warranty cores excepted) and note on the RO whether they took or declined them.
+2a. Offer the replaced parts back (14-1004; only parts that must go back to the manufacturer or distributor under a warranty agreement are excepted; a core-exchange part is still offered, the customer may keep it by paying the core charge) and note on the RO whether they took or declined them.
 3. Walk-around with the customer at the repaired area and panel gaps; show the calibration report and post-repair scan if the job had them.
 4. Warranty wording handed over and explained in one sentence, exactly as written in the shop profile (shop.toml `warranty`); do not improvise warranty terms.
 5. Payment collected: card, cash or check. Insurer checks made out to the customer must be endorsed.

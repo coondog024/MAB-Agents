@@ -173,7 +173,7 @@ CHECKIN_CHECKLIST = [
 DELIVERY_CHECKLIST = [
     "Washed, vacuumed, no dust in jambs, no tape, no overspray on glass or trim",
     "Invoice matches approved estimate plus supplements; deductible and customer-pay items itemized; used or reconditioned parts clearly marked (Com. Law 14-1003); customer signs and gets a copy",
-    "Offer the replaced parts back (Com. Law 14-1004, except warranty-return cores); note on the RO whether they took or declined them",
+    "Offer the replaced parts back (Com. Law 14-1004; only parts that must go back to the manufacturer or distributor under a warranty agreement are excepted); note on the RO whether they took or declined them",
     "Walk the repaired area and panel gaps with the customer; show calibration report and post-repair scan if applicable",
     "Warranty wording handed over, explained in one sentence",
     "Payment collected; insurer checks payable to the customer endorsed",

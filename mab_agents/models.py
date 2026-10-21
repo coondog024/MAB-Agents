@@ -146,6 +146,7 @@ class RepairOrder:
     estimate_totals: dict = field(default_factory=dict)
     labor_rates: dict = field(default_factory=dict)  # rates the estimate was written at
     plate: str = ""
+    loss_date: str = ""              # ISO date of loss (EMS AD1.LOSS_DATE); printed on the authorization
     # Rental clock: coverage is usually a daily cap and a day cap (often 30). Days count from
     # rental_start, else drop-off.
     rental_company: str = ""

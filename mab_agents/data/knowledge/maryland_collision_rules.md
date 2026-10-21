@@ -96,10 +96,12 @@ NHTSA notices. After the customer signs, the shop gives the customer a copy and
 keeps one (no retention period is stated; keep at least the 3-year Consumer
 Protection Act window).
 
-**§14-1004, replaced parts.** The shop must tender return of all replaced parts
-except those that must go back under a warranty or exchange agreement. Offer
-them at pickup and note on the RO whether the customer took or declined them;
-an insurer's salvage request does not override the customer's right.
+**§14-1004, replaced parts.** The shop must tender return of all replaced parts;
+the only exception is a part "required to be returned to the manufacturer or
+distributor under a warranty agreement". A core-exchange part is still offered
+(the customer may keep it and pay the core charge). Offer them at pickup and
+note on the RO whether the customer took or declined them; an insurer's salvage
+request does not override the customer's right.
 
 **§14-2302, aftermarket crash parts.** Before repairs, a body shop must give the
 owner a list of the replacement crash parts and say whether each is genuine

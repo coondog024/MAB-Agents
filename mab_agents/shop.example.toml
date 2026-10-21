@@ -36,14 +36,22 @@ teardown_fee = 250.00
 
 [forms]
 # Printed paperwork (mab forms <ro>, or the Paperwork buttons on an RO). The Maryland statutory
-# text is built in; these are the shop's own terms on the repair authorization.
+# text is built in; these are the shop's own terms on the repair authorization. Teardown and
+# storage terms come from [rates] teardown_fee and storage_per_day.
 authorization_terms = [
   "I authorize the repairs described in the written estimate, and any additional repairs I approve in writing or orally as recorded by the shop, and I authorize the shop to operate the vehicle for inspection, testing and delivery.",
-  "I direct my insurance company to pay the shop directly for the approved repairs. I remain responsible for my deductible, for any betterment or items my insurer declines that I approve, and for charges not covered by insurance.",
   "I will remove personal property from the vehicle. The shop is not responsible for personal property left in it.",
 ]
+# Added on insurance jobs only.
+direction_to_pay_terms = [
+  "I direct my insurance company to pay the shop directly for the approved repairs. I remain responsible for my deductible, for any betterment or items my insurer declines that I approve, and for charges for repairs I have authorized that are not covered by insurance.",
+]
+# Added on customer-pay jobs only.
+customer_pay_terms = [
+  "This is a customer-pay repair. I am responsible for the full amount of the final invoice, which is due when the vehicle is picked up.",
+]
 storage_grace_days = 3      # storage ($/day from [rates] storage_per_day) starts this many days after "your car is ready"
-estimate_fee = 0.0          # fee for a written estimate when the job does not proceed; 0 = none. 14-1002: must be disclosed in advance.
+estimate_fee = 0.0          # fee for a written estimate when the job does not proceed; 0 = none. 14-1002(a)(2): chargeable only if disclosed before the estimate is made.
 
 [targets]
 touch_time_hours_per_day = 3.5      # labor hours applied per calendar day in production

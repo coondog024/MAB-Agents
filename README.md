@@ -124,14 +124,17 @@ Every RO page has **Paperwork** buttons, and `mab forms <ro>` writes the same pa
 
 | Form | When | What it carries |
 |---|---|---|
-| Repair authorization and direction to pay | check-in, before any work | the **Customer's Rights** block immediately above the signature line (Com. Law 14-1008), the written-estimate items and damage-responsibility notice (14-1002), the NHTSA adjustment-program notice, storage terms, and the oral-notice record for tow-ins and after-hours drops |
-| Replacement crash parts list and aftermarket disclosure | before parts are ordered | every replacement part with genuine / aftermarket / used / rebuilt stated and the 10-point capital statement when an aftermarket crash part is used (14-2302) |
-| Authorization for additional repairs | when a supplement or customer-pay item is added | the supplement log, customer-pay items, the 10% consent (14-1002) and the permission record (14-1006) |
-| Final invoice addendum | at delivery | used / rebuilt parts disclosed (14-1003), replaced parts tendered (14-1004), the money line, the warranty wording from `shop.toml`, the notices repeated |
+| Repair authorization (and direction to pay on insurance jobs) | check-in, before any work | the **Customer's Rights** block immediately above the signature line (Com. Law 14-1008), the written-estimate figure the customer was given and the damage-responsibility notice (14-1002), the "Manufacturer Special Policy Adjustment Programs" notice, teardown and storage terms, the replaced-parts choice, and the oral-notice record for tow-ins and after-hours drops |
+| Replacement crash parts list and aftermarket disclosure | before parts are ordered | every replacement part with genuine or aftermarket stated (used OEM counts as genuine, reconditioned is marked by the estimator) and the statutory statement when an aftermarket crash part is used, both in 10-point capitals (14-2302) |
+| Authorization for additional repairs | when a supplement or customer-pay item is added | the supplement log, customer-pay items, the 10% consent against the written estimate (14-1002) and the permission record (14-1006) |
+| Final invoice addendum | at delivery | used / rebuilt parts disclosed (14-1003), replaced parts tendered (14-1004), the balance split by payer so the customer sees their own number, the warranty wording from `shop.toml`, the notices repeated |
 
-The shop's own terms (direction to pay, personal property, storage grace days,
-estimate fee) are in `[forms]` in `shop.toml`. The pages print from the browser
-(Ctrl+P, or the Print button) to paper or PDF.
+Each RO's Paperwork row says which forms are due now, which come later and
+which this job does not need. The shop's own terms (authorization, direction to
+pay, customer-pay wording, storage grace days, estimate fee) are in `[forms]` in
+`shop.toml`; teardown and storage amounts come from `[rates]`. Every printed
+page carries the RO, customer and vehicle in its footer. The pages print from
+the browser (Ctrl+P, or the Print button) to paper or PDF.
 
 ## Parts: sourcing and pricing
 

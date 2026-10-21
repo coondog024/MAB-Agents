@@ -346,6 +346,7 @@ def to_repair_order(job: EmsJob, shop: dict[str, Any], today: date | None = None
         rental=False,
         opened=opened,
         dropped_off=_date(ad2.get("RO_IN_DATE")),
+        loss_date=_date(ad1.get("LOSS_DATE")) or "",
         promised=_date(ad2.get("TAR_DATE")),
         delivered=_date(ad2.get("DATE_OUT")) or _date(ad2.get("RO_CMPDATE")),
         stage_changed=f"{opened}T08:00:00",
