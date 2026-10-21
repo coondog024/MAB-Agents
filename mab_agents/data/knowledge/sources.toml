@@ -1,0 +1,900 @@
+# Documents `mab kb fetch` downloads into this folder, then `mab kb sync` indexes.
+# Every URL below was checked on 2026-10-21. OEM makers revise statements several times a
+# year (GM revised its whole set in 2026); run `mab kb fetch --refresh` quarterly.
+# Only list documents the shop is allowed to use. Toyota TIS and BMW bulletins sit behind
+# subscriptions: print them from the portal into this folder by hand.
+
+# ---- indexes --------------------------------------------------------------------------
+[[source]]
+name = "I-CAR RTS OEM position statements hub"
+url = "https://rts.i-car.com/collision-repair-news/oem-position-statements.html"
+category = "oem/index"
+
+[[source]]
+name = "OEM1Stop position statements index"
+url = "https://www.oem1stop.com/content/position-statements"
+category = "oem/index"
+note = "Was under scheduled maintenance on 2026-10-21; the RTS mirrors below are the verified copies."
+
+[[source]]
+name = "DEG Database Enhancement Gateway home"
+url = "https://degweb.org/"
+category = "estimating/deg"
+note = "Estimating guides (CCC/MOTOR, Mitchell, Audatex), DEG inquiries and quick tips."
+
+# ---- GM (gmparts.com originals, revised 2026) -----------------------------------------
+[[source]]
+name = "GM position statements index"
+url = "https://www.gmparts.com/trade-professionals/position-statements"
+category = "oem/gm"
+
+[[source]]
+name = "GM pre and post collision diagnostic scans required"
+url = "https://www.gmparts.com/content/dam/gmparts/na/us/en/index/trade-professionals/position-statements/02-pdfs/pre-and-post-collision-diagnostic-scans.pdf"
+category = "oem/gm"
+
+[[source]]
+name = "GM use of genuine GM parts aftermarket salvage reconditioned"
+url = "https://www.gmparts.com/content/dam/gmparts/na/us/en/index/trade-professionals/position-statements/02-pdfs/aftermarket-parts.pdf"
+category = "oem/gm"
+
+[[source]]
+name = "GM supplemental restraint systems used salvaged imitation"
+url = "https://www.gmparts.com/content/dam/gmparts/na/us/en/index/trade-professionals/position-statements/02-pdfs/supplemental-restraint-systems-srs.pdf"
+category = "oem/gm"
+
+[[source]]
+name = "GM advanced driver assistance systems consideration"
+url = "https://www.gmparts.com/content/dam/gmparts/na/us/en/index/trade-professionals/position-statements/02-pdfs/advanced-driver-assistance-systems-consideration.pdf"
+category = "oem/gm"
+
+[[source]]
+name = "GM bumper fascia with ADAS"
+url = "https://www.gmparts.com/content/dam/gmparts/na/us/en/index/trade-professionals/position-statements/02-pdfs/bumper-fascia-with-adas.pdf"
+category = "oem/gm"
+
+[[source]]
+name = "GM windshield replacement"
+url = "https://www.gmparts.com/content/dam/gmparts/na/us/en/index/trade-professionals/position-statements/02-pdfs/windshield-replacement.pdf"
+category = "oem/gm"
+
+[[source]]
+name = "GM clip procedure not approved"
+url = "https://www.gmparts.com/content/dam/gmparts/na/us/en/index/trade-professionals/position-statements/02-pdfs/clip-procedure.pdf"
+category = "oem/gm"
+
+[[source]]
+name = "GM refinishing aluminum and chrome wheels"
+url = "https://www.gmparts.com/content/dam/gmparts/na/us/en/index/trade-professionals/position-statements/02-pdfs/refinishing-aluminum-and-chrome-wheels.pdf"
+category = "oem/gm"
+
+# ---- Ford / Lincoln (I-CAR RTS mirrors, 2025-10-01 and 2026-05-01) --------------------
+[[source]]
+name = "Ford position statements index"
+url = "https://rts.i-car.com/oem-information/ford/ford-statements.html"
+category = "oem/ford"
+
+[[source]]
+name = "Ford pre and post diagnostic scanning required"
+url = "https://rts.i-car.com/images/pdf/oem-info/ford/statements/34781.pdf"
+category = "oem/ford"
+
+[[source]]
+name = "Ford ADAS integrity and repair technical imperatives"
+url = "https://rts.i-car.com/images/pdf/oem-info/ford/statements/85186.pdf"
+category = "oem/ford"
+
+[[source]]
+name = "Ford use of genuine Ford OE parts"
+url = "https://rts.i-car.com/images/pdf/oem-info/ford/statements/31012.pdf"
+category = "oem/ford"
+
+[[source]]
+name = "Ford salvaged aftermarket remanufactured SRS components"
+url = "https://rts.i-car.com/images/pdf/oem-info/ford/statements/31013.pdf"
+category = "oem/ford"
+
+[[source]]
+name = "Ford structural repairs"
+url = "https://rts.i-car.com/images/pdf/oem-info/ford/statements/31011.pdf"
+category = "oem/ford"
+
+[[source]]
+name = "Ford aluminum structural repair"
+url = "https://rts.i-car.com/images/pdf/oem-info/ford/statements/81074.pdf"
+category = "oem/ford"
+
+[[source]]
+name = "Ford OEM structural fasteners and adhesives"
+url = "https://rts.i-car.com/images/pdf/oem-info/ford/statements/41117.pdf"
+category = "oem/ford"
+
+[[source]]
+name = "Ford clip repair not approved"
+url = "https://rts.i-car.com/images/pdf/oem-info/ford/statements/31009.pdf"
+category = "oem/ford"
+
+[[source]]
+name = "Ford remanufacturing or refinishing wheels"
+url = "https://rts.i-car.com/images/pdf/oem-info/ford/statements/31010.pdf"
+category = "oem/ford"
+
+[[source]]
+name = "Ford use of OEM glass"
+url = "https://rts.i-car.com/images/pdf/oem-info/ford/statements/41116.pdf"
+category = "oem/ford"
+
+[[source]]
+name = "Ford clearcoat blending not approved"
+url = "https://rts.i-car.com/images/pdf/oem-info/ford/statements/31008.pdf"
+category = "oem/ford"
+
+[[source]]
+name = "Ford bumper fascia repair with ADAS"
+url = "https://rts.i-car.com/images/pdf/oem-info/ford/statements/44470.pdf"
+category = "oem/ford"
+
+# ---- Honda / Acura ---------------------------------------------------------------------
+[[source]]
+name = "Honda position statements index"
+url = "https://rts.i-car.com/oem-information/honda/honda-position-statements.html"
+category = "oem/honda"
+
+[[source]]
+name = "Honda post collision diagnostic scan and calibration requirements v6"
+url = "https://rts.i-car.com/images/pdf/oem-info/honda/position-statements/24823x.pdf"
+category = "oem/honda"
+
+[[source]]
+name = "Honda replacement of structural parts"
+url = "https://rts.i-car.com/images/pdf/oem-info/honda/position-statements/14887x.pdf"
+category = "oem/honda"
+
+[[source]]
+name = "Honda use of aftermarket alternative parts"
+url = "https://rts.i-car.com/images/pdf/oem-info/honda/position-statements/14889.pdf"
+category = "oem/honda"
+
+[[source]]
+name = "Honda use of salvage recycled parts"
+url = "https://rts.i-car.com/images/pdf/oem-info/honda/position-statements/14891x.pdf"
+category = "oem/honda"
+
+[[source]]
+name = "Honda unibody repair sectioning"
+url = "https://rts.i-car.com/images/pdf/oem-info/honda/position-statements/14884.pdf"
+category = "oem/honda"
+
+[[source]]
+name = "Honda driver assist systems may fail unless OE parts used"
+url = "https://rts.i-car.com/images/pdf/oem-info/honda/position-statements/18128.pdf"
+category = "oem/honda"
+
+[[source]]
+name = "Honda steel and aluminum wheel repair"
+url = "https://rts.i-car.com/images/pdf/oem-info/honda/position-statements/14882x.pdf"
+category = "oem/honda"
+
+[[source]]
+name = "Honda salvaged used air bag components"
+url = "https://rts.i-car.com/images/pdf/oem-info/honda/position-statements/14883.pdf"
+category = "oem/honda"
+
+[[source]]
+name = "Honda non repairable zones on bumper covers"
+url = "https://rts.i-car.com/images/pdf/oem-info/honda/position-statements/83247.pdf"
+category = "oem/honda"
+
+# ---- Stellantis / FCA (all 2025-12-01) --------------------------------------------------
+[[source]]
+name = "Stellantis position statements index"
+url = "https://rts.i-car.com/oem-information/chrysler/chrysler-position-statements.html"
+category = "oem/stellantis"
+
+[[source]]
+name = "Stellantis scan tool usage"
+url = "https://rts.i-car.com/images/pdf/oem-info/chrysler/position-statements/24540.pdf"
+category = "oem/stellantis"
+
+[[source]]
+name = "Stellantis use of aftermarket parts"
+url = "https://rts.i-car.com/images/pdf/oem-info/chrysler/position-statements/39778x.pdf"
+category = "oem/stellantis"
+
+[[source]]
+name = "Stellantis use of salvage recycled parts"
+url = "https://rts.i-car.com/images/pdf/oem-info/chrysler/position-statements/40394x.pdf"
+category = "oem/stellantis"
+
+[[source]]
+name = "Stellantis structural repair parts usage"
+url = "https://rts.i-car.com/images/pdf/oem-info/chrysler/position-statements/44123x.pdf"
+category = "oem/stellantis"
+
+[[source]]
+name = "Stellantis one time use parts and fasteners"
+url = "https://rts.i-car.com/images/pdf/oem-info/chrysler/position-statements/83312.pdf"
+category = "oem/stellantis"
+
+[[source]]
+name = "Stellantis reconditioned wheel usage"
+url = "https://rts.i-car.com/images/pdf/oem-info/chrysler/position-statements/44122x.pdf"
+category = "oem/stellantis"
+
+[[source]]
+name = "Stellantis bumper fascia repair with ADAS"
+url = "https://rts.i-car.com/images/pdf/oem-info/chrysler/position-statements/83311.pdf"
+category = "oem/stellantis"
+
+[[source]]
+name = "Stellantis Mopar glass replacement"
+url = "https://rts.i-car.com/images/pdf/oem-info/chrysler/position-statements/38225x.pdf"
+category = "oem/stellantis"
+
+[[source]]
+name = "Stellantis use of heat"
+url = "https://rts.i-car.com/images/pdf/oem-info/chrysler/position-statements/44126.pdf"
+category = "oem/stellantis"
+
+[[source]]
+name = "Stellantis steering systems"
+url = "https://rts.i-car.com/images/pdf/oem-info/chrysler/position-statements/44120x.pdf"
+category = "oem/stellantis"
+
+# ---- Nissan / Infiniti -----------------------------------------------------------------
+[[source]]
+name = "Nissan position statements index"
+url = "https://rts.i-car.com/oem-information/nissan/nissan-position-statements.html"
+category = "oem/nissan"
+
+[[source]]
+name = "Nissan NPSB 25-946 pre and post repair scanning calibrations"
+url = "https://rts.i-car.com/images/pdf/oem-info/nissan/position-statements/24715.pdf"
+category = "oem/nissan"
+
+[[source]]
+name = "Nissan NPSB 26-971 ADAS components"
+url = "https://rts.i-car.com/images/pdf/oem-info/nissan/position-statements/82767.pdf"
+category = "oem/nissan"
+
+[[source]]
+name = "Nissan NPSB 16-594 use of non OEM parts"
+url = "https://rts.i-car.com/images/pdf/oem-info/nissan/position-statements/24722x.pdf"
+category = "oem/nissan"
+
+[[source]]
+name = "Nissan NPSB 16-598 use of salvage parts"
+url = "https://rts.i-car.com/images/pdf/oem-info/nissan/position-statements/24723x.pdf"
+category = "oem/nissan"
+
+[[source]]
+name = "Nissan NPSB 16-599 unibody structural repairs"
+url = "https://rts.i-car.com/images/pdf/oem-info/nissan/position-statements/24719x.pdf"
+category = "oem/nissan"
+
+[[source]]
+name = "Nissan NPSB 16-601 seat belt replacement considerations"
+url = "https://rts.i-car.com/images/pdf/oem-info/nissan/position-statements/24714x.pdf"
+category = "oem/nissan"
+
+[[source]]
+name = "Nissan NPSB 16-605 salvaged used air bag components"
+url = "https://rts.i-car.com/images/pdf/oem-info/nissan/position-statements/24712x.pdf"
+category = "oem/nissan"
+
+[[source]]
+name = "Nissan NPSB 18-420 single use parts replacement"
+url = "https://rts.i-car.com/images/pdf/oem-info/nissan/position-statements/35027x.pdf"
+category = "oem/nissan"
+
+[[source]]
+name = "Nissan NPSB 16-595 steel and aluminum wheel repair"
+url = "https://rts.i-car.com/images/pdf/oem-info/nissan/position-statements/24717x.pdf"
+category = "oem/nissan"
+
+[[source]]
+name = "Nissan NPSB 18-417 partial clear coat blending"
+url = "https://rts.i-car.com/images/pdf/oem-info/nissan/position-statements/35028x.pdf"
+category = "oem/nissan"
+
+[[source]]
+name = "Nissan NPSB 16-606 windshield and glass replacement"
+url = "https://rts.i-car.com/images/pdf/oem-info/nissan/position-statements/24711x.pdf"
+category = "oem/nissan"
+
+# ---- Subaru -------------------------------------------------------------------------------
+[[source]]
+name = "Subaru position statements index"
+url = "https://rts.i-car.com/oem-information/subaru/subaru-position-statements.html"
+category = "oem/subaru"
+
+[[source]]
+name = "Subaru pre and post scanning of collision vehicles"
+url = "https://rts.i-car.com/images/pdf/oem-info/subaru/position-statements/29235.pdf"
+category = "oem/subaru"
+
+[[source]]
+name = "Subaru use of aftermarket substitute parts"
+url = "https://rts.i-car.com/images/pdf/oem-info/subaru/position-statements/29233x.pdf"
+category = "oem/subaru"
+
+[[source]]
+name = "Subaru structural repairs"
+url = "https://rts.i-car.com/images/pdf/oem-info/subaru/position-statements/40960.pdf"
+category = "oem/subaru"
+
+[[source]]
+name = "Subaru wheel repair"
+url = "https://rts.i-car.com/images/pdf/oem-info/subaru/position-statements/29232.pdf"
+category = "oem/subaru"
+
+[[source]]
+name = "Subaru salvage air bags"
+url = "https://rts.i-car.com/images/pdf/oem-info/subaru/position-statements/29234.pdf"
+category = "oem/subaru"
+
+[[source]]
+name = "Subaru aftermarket windshield glass EyeSight"
+url = "https://rts.i-car.com/images/pdf/oem-info/subaru/position-statements/84801.pdf"
+category = "oem/subaru"
+
+# ---- Hyundai / Genesis -------------------------------------------------------------------
+[[source]]
+name = "Hyundai position statements index"
+url = "https://rts.i-car.com/oem-information/hyundai/hyundai-position-statements.html"
+category = "oem/hyundai"
+
+[[source]]
+name = "Hyundai pre repair and post repair system scanning"
+url = "https://rts.i-car.com/images/pdf/oem-info/hyundai/position-statements/31340x.pdf"
+category = "oem/hyundai"
+
+[[source]]
+name = "Hyundai non OEM and recycled parts"
+url = "https://rts.i-car.com/images/pdf/oem-info/hyundai/position-statements/33398.pdf"
+category = "oem/hyundai"
+
+[[source]]
+name = "Hyundai wheel repair and reconditioning"
+url = "https://rts.i-car.com/images/pdf/oem-info/hyundai/position-statements/31339.pdf"
+category = "oem/hyundai"
+
+[[source]]
+name = "Hyundai bumpers with corner radar or ultrasonic sensors"
+url = "https://rts.i-car.com/images/pdf/oem-info/hyundai/position-statements/77402.pdf"
+category = "oem/hyundai"
+
+[[source]]
+name = "Hyundai use of heat"
+url = "https://rts.i-car.com/images/pdf/oem-info/hyundai/position-statements/77401.pdf"
+category = "oem/hyundai"
+
+[[source]]
+name = "Hyundai clip repair"
+url = "https://rts.i-car.com/images/pdf/oem-info/hyundai/position-statements/33397.pdf"
+category = "oem/hyundai"
+
+[[source]]
+name = "Hyundai clear coat blending"
+url = "https://rts.i-car.com/images/pdf/oem-info/hyundai/position-statements/33396.pdf"
+category = "oem/hyundai"
+
+[[source]]
+name = "Hyundai non OEM glass"
+url = "https://rts.i-car.com/images/pdf/oem-info/hyundai/position-statements/83334.pdf"
+category = "oem/hyundai"
+
+[[source]]
+name = "Hyundai high voltage battery inspection after structural damage"
+url = "https://rts.i-car.com/images/pdf/oem-info/hyundai/position-statements/72463.pdf"
+category = "oem/hyundai"
+
+# ---- Kia (official site) ------------------------------------------------------------------
+[[source]]
+name = "Kia positioning statements page"
+url = "https://kiatechinfo.snapon.com/KiaPositioningStatements.aspx"
+category = "oem/kia"
+
+[[source]]
+name = "Kia pre and post diagnostic scanning"
+url = "https://kiatechinfo.snapon.com/Forms/KiaPrePostScanningPositionStatement.pdf"
+category = "oem/kia"
+
+[[source]]
+name = "Kia general parts positioning statement"
+url = "https://kiatechinfo.snapon.com/Forms/KiaMotorsAmericaGeneralPartsPositioningStatement.pdf"
+category = "oem/kia"
+
+[[source]]
+name = "Kia body parts use positioning statement"
+url = "https://kiatechinfo.snapon.com/Forms/KiaMotorsAmericaBodyPartsUsePositioningStatement.pdf"
+category = "oem/kia"
+
+[[source]]
+name = "Kia remanufactured parts positioning statement"
+url = "https://kiatechinfo.snapon.com/Forms/KiaMotorsAmericaRemanufacturedPositioningStatement.pdf"
+category = "oem/kia"
+
+[[source]]
+name = "Kia safety restraint systems positioning statement"
+url = "https://kiatechinfo.snapon.com/Forms/KiaMotorsAmericaSafetyRestraintSystemPositioningStatement.pdf"
+category = "oem/kia"
+
+# ---- Mazda ---------------------------------------------------------------------------------
+[[source]]
+name = "Mazda pre and post repair diagnostic scanning"
+url = "https://rts.i-car.com/images/pdf/oem-info/mazda/position-statements/30996x.pdf"
+category = "oem/mazda"
+
+[[source]]
+name = "Mazda use of non OEM parts"
+url = "https://rts.i-car.com/images/pdf/oem-info/mazda/position-statements/30200x.pdf"
+category = "oem/mazda"
+
+# ---- VW / Audi ----------------------------------------------------------------------------
+[[source]]
+name = "Volkswagen structural unibody component replacement"
+url = "https://rts.i-car.com/images/pdf/oem-info/volkswagen/position-statements/21480.pdf"
+category = "oem/vw-audi"
+
+[[source]]
+name = "Volkswagen SRS airbag component replacement"
+url = "https://rts.i-car.com/images/pdf/oem-info/volkswagen/position-statements/21476.pdf"
+category = "oem/vw-audi"
+
+[[source]]
+name = "Volkswagen vehicle body sectioning"
+url = "https://rts.i-car.com/images/pdf/oem-info/volkswagen/position-statements/21478x.pdf"
+category = "oem/vw-audi"
+
+[[source]]
+name = "Volkswagen welders"
+url = "https://rts.i-car.com/images/pdf/oem-info/volkswagen/position-statements/21473x.pdf"
+category = "oem/vw-audi"
+
+[[source]]
+name = "Audi structural unibody component replacement"
+url = "https://rts.i-car.com/images/pdf/oem-info/audi/position-statements/83310.pdf"
+category = "oem/vw-audi"
+
+[[source]]
+name = "Audi position statements index"
+url = "https://rts.i-car.com/oem-information/audi/audi-position-statements.html"
+category = "oem/vw-audi"
+note = "The 2012 Audi PDFs are image scans with no text layer; OCR them before relying on search."
+
+# ---- Mercedes-Benz, Volvo, Rivian, Toyota, BMW, Tesla ---------------------------------------
+[[source]]
+name = "Mercedes-Benz diagnostic repairs following a collision"
+url = "https://rts.i-car.com/images/pdf/oem-info/mercedes-benz/position-statements/26689.pdf"
+category = "oem/mercedes"
+
+[[source]]
+name = "Mercedes-Benz genuine replacement parts"
+url = "https://rts.i-car.com/images/pdf/oem-info/mercedes-benz/position-statements/26700.pdf"
+category = "oem/mercedes"
+
+[[source]]
+name = "Mercedes-Benz wheel repair and reconditioning"
+url = "https://rts.i-car.com/images/pdf/oem-info/mercedes-benz/position-statements/26698.pdf"
+category = "oem/mercedes"
+
+[[source]]
+name = "Volvo position statements index"
+url = "https://rts.i-car.com/oem-information/volvo/volvo-position-statements.html"
+category = "oem/volvo"
+
+[[source]]
+name = "Volvo scanning and diagnostics"
+url = "https://rts.i-car.com/images/pdf/oem-info/volvo/position-statements/75868.pdf"
+category = "oem/volvo"
+
+[[source]]
+name = "Volvo supplemental restraint systems"
+url = "https://rts.i-car.com/images/pdf/oem-info/volvo/position-statements/34804x.pdf"
+category = "oem/volvo"
+
+[[source]]
+name = "Volvo aftermarket parts"
+url = "https://rts.i-car.com/images/pdf/oem-info/volvo/position-statements/75865.pdf"
+category = "oem/volvo"
+
+[[source]]
+name = "Volvo replacement of wheels"
+url = "https://rts.i-car.com/images/pdf/oem-info/volvo/position-statements/75871.pdf"
+category = "oem/volvo"
+
+[[source]]
+name = "Volvo clearcoat blending"
+url = "https://rts.i-car.com/images/pdf/oem-info/volvo/position-statements/75861.pdf"
+category = "oem/volvo"
+
+[[source]]
+name = "Rivian position statements index"
+url = "https://rts.i-car.com/oem-information/rivian/rivian-position-statements.html"
+category = "oem/rivian"
+
+[[source]]
+name = "Rivian pre and post repair scan requirements RCI-98-22-007"
+url = "https://rts.i-car.com/images/pdf/oem-info/rivian/position-statements/71359x.pdf"
+category = "oem/rivian"
+
+[[source]]
+name = "Rivian replacement parts RCI-98-22-001"
+url = "https://rts.i-car.com/images/pdf/oem-info/rivian/position-statements/71341.pdf"
+category = "oem/rivian"
+
+[[source]]
+name = "Toyota Lexus pre and post repair scanning CRIB 191 summary"
+url = "https://rts.i-car.com/crn-429.html"
+category = "oem/toyota"
+note = "The CRIB itself is inside Toyota TIS (subscription). Print it from TIS into this folder."
+
+[[source]]
+name = "Toyota CRIB 157 collision parts position statement"
+url = "https://www.oemrepairinfo.ca/positionstatements/toyota-lexus/CRIB157-Collision-Parts-Position-Statement.pdf"
+category = "oem/toyota"
+
+[[source]]
+name = "Toyota CRIB 154 wheel repair and reconditioning"
+url = "https://scrs.com/wp-content/uploads/2017/09/TOYOTA-WheelRepairReconditioning_TIS.pdf"
+category = "oem/toyota"
+
+[[source]]
+name = "BMW pre and post repair scanning SIB 41 05 19 summary"
+url = "https://rts.i-car.com/crn-1356.html"
+category = "oem/bmw"
+note = "The SIB is on BMW's subscription technical site. Print it into this folder."
+
+[[source]]
+name = "Tesla repair guidelines for parts fasteners and chemicals (Model 3)"
+url = "https://service.tesla.com/docs/BodyRepair/Body_Repair_Procedures/Model_3/HTML/en-us/GUID-D8AB5994-C3C1-44B9-A392-585E2298719F.html"
+category = "oem/tesla"
+
+# ---- Maryland ----------------------------------------------------------------------------
+[[source]]
+name = "Maryland Insurance Article 10-503 anti-steering"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gin&section=10-503"
+category = "maryland"
+
+[[source]]
+name = "Maryland Insurance Article 10-502 usual and customary charges drive-in appraisal"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gin&section=10-502"
+category = "maryland"
+
+[[source]]
+name = "Maryland Insurance Article 10-504 penalties"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gin&section=10-504"
+category = "maryland"
+
+[[source]]
+name = "Maryland Commercial Law 14-1002 written estimate and 10 percent rule"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcl&section=14-1002"
+category = "maryland"
+
+[[source]]
+name = "Maryland Commercial Law 14-1008 customer rights notice"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcl&section=14-1008"
+category = "maryland"
+
+[[source]]
+name = "Maryland Commercial Law 14-2302 aftermarket crash parts disclosure"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcl&section=14-2302"
+category = "maryland"
+
+[[source]]
+name = "Maryland Commercial Law 16-202 garage keeper lien"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcl&section=16-202"
+category = "maryland"
+
+[[source]]
+name = "Maryland Commercial Law 16-207 lien sale notice"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcl&section=16-207"
+category = "maryland"
+
+[[source]]
+name = "Maryland Transportation Article 11-152 salvage 75 percent definition"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gtr&section=11-152"
+category = "maryland"
+
+[[source]]
+name = "Maryland Insurance Article 27-906 aftermarket crash part warranty"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gin&section=27-906"
+category = "maryland"
+
+[[source]]
+name = "Maryland Insurance Article 27-304 unfair claim settlement practices"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gin&section=27-304"
+category = "maryland"
+
+[[source]]
+name = "MIA consumer guide to auto insurance"
+url = "https://insurance.maryland.gov/consumer/documents/publications/autoinsuranceguide.pdf"
+category = "maryland"
+
+[[source]]
+name = "Maryland Insurance Administration file a complaint"
+url = "https://insurance.maryland.gov/Consumer/Pages/FileAComplaint.aspx"
+category = "maryland"
+
+# ---- federal paint shop and safety ---------------------------------------------------------
+[[source]]
+name = "EPA 6H NESHAP 40 CFR 63 Subpart HHHHHH paint stripping and surface coating"
+url = "https://www.ecfr.gov/current/title-40/chapter-I/subchapter-C/part-63/subpart-HHHHHH"
+category = "compliance"
+
+[[source]]
+name = "OSHA 29 CFR 1910.134 respiratory protection"
+url = "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.134"
+category = "compliance"
+
+# ---- industry references -------------------------------------------------------------------
+[[source]]
+name = "CCC Crash Course 2026"
+url = "https://www.cccis.com/reports/crash-course-2026"
+category = "industry"
+
+[[source]]
+name = "CCC Moments of Truth customer satisfaction drivers"
+url = "https://www.cccis.com/news-and-insights/posts/cccis-study-identifies-key-drivers-of-customer-satisfaction-and-retention-in-auto-claims-and-repair-process"
+category = "industry"
+
+[[source]]
+name = "Google Business Profile API prerequisites"
+url = "https://developers.google.com/my-business/content/prereqs"
+category = "industry"
+
+[[source]]
+name = "Twilio A2P 10DLC pricing and fees"
+url = "https://support.twilio.com/hc/en-us/articles/1260803965530-Pricing-and-Fees-for-A2P-10DLC-Service"
+category = "industry"
+
+# ---- Maryland, second sweep 2026-10-21 (statutes, COMAR, MIA, MVA, MDE) ------------------
+[[source]]
+name = "Maryland Commercial Law 14-1003 final invoice used and rebuilt parts disclosure"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcl&section=14-1003"
+category = "maryland"
+
+[[source]]
+name = "Maryland Commercial Law 14-1004 return of replaced parts"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcl&section=14-1004"
+category = "maryland"
+
+[[source]]
+name = "Maryland Commercial Law 14-1006 no charge for unauthorized repairs"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcl&section=14-1006"
+category = "maryland"
+
+[[source]]
+name = "Maryland Commercial Law 14-1007 enforcement Consumer Protection Division"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcl&section=14-1007"
+category = "maryland"
+
+[[source]]
+name = "Maryland Commercial Law 14-2301 crash parts definitions"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcl&section=14-2301"
+category = "maryland"
+
+[[source]]
+name = "Maryland Commercial Law 16-203 lien retention and 30 day notice to lienholders"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcl&section=16-203"
+category = "maryland"
+
+[[source]]
+name = "Maryland Insurance Article 27-303 unfair claim settlement single acts"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gin&section=27-303"
+category = "maryland"
+
+[[source]]
+name = "Maryland Insurance Article 27-305 penalties"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gin&section=27-305"
+category = "maryland"
+
+[[source]]
+name = "Maryland Transportation Article 13-506 salvage certificate and rebuilt salvage"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gtr&section=13-506"
+category = "maryland"
+
+[[source]]
+name = "Maryland Transportation Article 13-507 retitling salvage vehicles"
+url = "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gtr&section=13-507"
+category = "maryland"
+
+[[source]]
+name = "COMAR 31.15.12.02 total loss definitions substantially similar vehicle"
+url = "https://regs.maryland.gov/us/md/exec/comar/31.15.12.02"
+category = "maryland"
+
+[[source]]
+name = "COMAR 31.15.12.03 total loss offer deadlines"
+url = "https://regs.maryland.gov/us/md/exec/comar/31.15.12.03"
+category = "maryland"
+
+[[source]]
+name = "COMAR 31.15.12.04 total loss minimum cash offer taxes and fees"
+url = "https://regs.maryland.gov/us/md/exec/comar/31.15.12.04"
+category = "maryland"
+
+[[source]]
+name = "COMAR 31.15.12.05 written valuation on request within 7 business days"
+url = "https://regs.maryland.gov/us/md/exec/comar/31.15.12.05"
+category = "maryland"
+
+[[source]]
+name = "COMAR 31.15.07.03 claim acknowledgement and coverage decision clocks"
+url = "https://regs.maryland.gov/us/md/exec/comar/31.15.07.03"
+category = "maryland"
+
+[[source]]
+name = "COMAR 31.15.07.04 written status every 45 days on open investigations"
+url = "https://regs.maryland.gov/us/md/exec/comar/31.15.07.04"
+category = "maryland"
+
+[[source]]
+name = "MIA Bulletin 24-8 diminished value under uninsured motorist property damage"
+url = "https://insurance.maryland.gov/Insurer/Documents/bulletins/24-8-Statutorily-Required-Uninsured-Underinsured-Coverage-for-Value-Damages.pdf"
+category = "maryland"
+
+[[source]]
+name = "MIA understanding total loss consumer page"
+url = "https://insurance.maryland.gov/Consumer/Pages/total-loss.aspx"
+category = "maryland"
+
+[[source]]
+name = "MVA titling salvaged vehicles owner retention VR-028"
+url = "https://mva.maryland.gov/title-registration/title-vehicle/salvaged-vehicles"
+category = "maryland"
+
+[[source]]
+name = "MVA VR-100 mechanics lien application and checklist"
+url = "https://mva.maryland.gov/media/229"
+category = "maryland"
+note = "PDF form, revision 04-25. The MVA instruction sheet is the working lien-sale checklist."
+
+[[source]]
+name = "WMABA labor rate survey"
+url = "https://wmaba.com/labor-rate-survey/"
+category = "maryland"
+note = "Only published regional benchmark; Maryland has no statutory or MIA prevailing-rate survey."
+
+[[source]]
+name = "SB 789 2026 fiscal note ADAS repair facility licensing study"
+url = "https://mgaleg.maryland.gov/2026RS/fnotes/bil_0009/sb0789.pdf"
+category = "maryland"
+
+# ---- Maryland environmental and tax --------------------------------------------------
+[[source]]
+name = "COMAR 26.11.19.23 vehicle refinishing VOC limits and records"
+url = "https://regs.maryland.gov/us/md/exec/comar/26.11.19.23"
+category = "compliance"
+
+[[source]]
+name = "MDE air quality general permit vehicle refinishing autobody package"
+url = "https://mde.maryland.gov/programs/Permits/AirManagementPermits/Documents/00_Autobody_Package%20Copy%206-13.pdf"
+category = "compliance"
+note = "Dated June 2013; confirm the current form and fee with MDE ARA before relying on specifics."
+
+[[source]]
+name = "COMAR 26.13.02.05 Maryland defined small quantity generator"
+url = "https://regs.maryland.gov/us/md/exec/comar/26.13.02.05"
+category = "compliance"
+
+[[source]]
+name = "MDE hazardous waste generator compliance guide effective 2021-05-03"
+url = "https://mde.maryland.gov/programs/land/HazardousWaste/Documents/Compliance%20Guide%20-%20MD%20HW%20generators%20-%20new%20requirements%20eff%205-3-21%20FNL.pdf"
+category = "compliance"
+
+[[source]]
+name = "40 CFR 63.11170 applicability of the 6H rule (Cornell LII copy)"
+url = "https://www.law.cornell.edu/cfr/text/40/63.11170"
+category = "compliance"
+note = "Same text as the eCFR entry above; eCFR blocks some automated fetches."
+
+[[source]]
+name = "COMAR 03.06.01.03 Maryland sales tax on repairs of tangible personal property"
+url = "https://regs.maryland.gov/us/md/exec/comar/03.06.01.03"
+category = "maryland"
+
+# ---- Estimating guides and DEG (free, republishable DEG text; the IP guides stay internal) --
+[[source]]
+name = "DEG estimators toolbox"
+url = "https://degweb.org/estimators-toolbox/"
+category = "estimating/deg"
+
+[[source]]
+name = "DEG estimating tips weekly"
+url = "https://degweb.org/estimating-tips/"
+category = "estimating/deg"
+note = "Weekly tips by platform (CCC ONE, Mitchell, Qapter). Re-fetch monthly."
+
+[[source]]
+name = "DEG knowledge base reference charts"
+url = "https://degweb.org/knowledge-base/"
+category = "estimating/deg"
+
+[[source]]
+name = "ASA not-included operations chart new parts (DEG knowledge base)"
+url = "https://degweb.org/wp-content/uploads/2023/01/ASA-Not-Included-Chart-New-Parts.pdf"
+category = "estimating/deg"
+
+[[source]]
+name = "DEG summary of updates to CCC MOTOR guide to estimating November 2022"
+url = "https://degweb.org/summary-of-updates-to-ccc-motor-gte"
+category = "estimating/deg"
+
+[[source]]
+name = "DEG CCC MOTOR updated guide to estimating December 2021 revision"
+url = "https://degweb.org/ccc-motor-updated-guide-to-estimating/"
+category = "estimating/deg"
+
+[[source]]
+name = "DEG inquiry process"
+url = "https://degweb.org/inquiry-process/"
+category = "estimating/deg"
+
+[[source]]
+name = "DEG CCC MOTOR pathways page (links to the live MOTOR guide)"
+url = "https://degweb.org/ccc-motor-pathways/"
+category = "estimating/deg"
+note = "The live MOTOR Guide to Estimating at help.cccis.com is licensed CCC content: view it from a shop browser or the CCC ONE Guide tab; do not bulk-copy it into the knowledge folder."
+
+[[source]]
+name = "DEG Mitchell page (links to the free Mitchell CEG P-pages)"
+url = "https://degweb.org/mitchell/"
+category = "estimating/deg"
+
+[[source]]
+name = "Audatex Qapter database reference manual April 2025 (hosted by DEG)"
+url = "https://degweb.org/wp-content/uploads/2025/05/DatabaseReferenceManual-4-25.pdf"
+category = "estimating/audatex"
+note = "Audatex copyright, marked internal. Keep for in-shop reference only."
+
+[[source]]
+name = "Repairer Driven News CIC estimating committee 2024 MOTOR PDF discontinued"
+url = "https://www.repairerdrivennews.com/2024/02/09/cic-estimating-committee-overviews-recent-changes-to-ccc-mitchell-and-qapter/"
+category = "estimating/industry"
+
+# ---- CCC ONE EMS export and CIECA codes ---------------------------------------------
+[[source]]
+name = "CCC job aid adding and removing EMS paths 2024"
+url = "https://help.cccis.com/learning/rf/prod-category/setupconfig/AddRemoveEMSPaths.pdf"
+category = "ems/ccc"
+note = "help.cccis.com refuses datacenter fetches; download from a shop PC if kb fetch gets a 403."
+
+[[source]]
+name = "CCC Secure Share limited parts message part type codes"
+url = "https://www.cccsecureshare.com/legal/limitedpartsmessages"
+category = "ems/ccc"
+
+[[source]]
+name = "CCC Secure Share limited accounting message labor and totals codes"
+url = "https://www.cccsecureshare.com/legal/limitedaccountingmessages"
+category = "ems/ccc"
+
+[[source]]
+name = "CCC reading a CCC ONE estimate of record 2018 (GEICO copy)"
+url = "https://claims.geico.com/EForms/CCCEstimateGuide2018.PDF"
+category = "ems/ccc"
+
+[[source]]
+name = "SCRS EMS data export options and data pumps 2015"
+url = "https://www.repairerdrivennews.com/wp-content/uploads/2018/04/scrs-researches-ems-data-export-options-to-identify-data-pumps.pdf"
+category = "ems/cieca"
+
+[[source]]
+name = "CIECA EMS standards page"
+url = "https://www.cieca.com/ems-standards"
+category = "ems/cieca"
+note = "The EMS data dictionary itself is members-only; `mab import-ems --fields` reads the layout from your own export."
+
+[[source]]
+name = "CollisionLink EMS path setup and export workflow for CCC ONE"
+url = "https://getscs.com/wp-content/uploads/2023/02/cccone-1.pdf"
+category = "ems/ccc"
+
+# ---- CRISMA vendor -------------------------------------------------------------------
+[[source]]
+name = "Jhenn Systems CRISMA product page"
+url = "http://www.jhennsys.com/crisma.html"
+category = "crisma"
+note = "Vendor: Jhenn Systems, Inc., Halethorpe MD, 800-580-1627 / 410-609-0750, info@JhennSys.com."

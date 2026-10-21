@@ -1,0 +1,4 @@
+anthropic>=1.17,<2
+python-dotenv>=1.0
+pypdf>=4
+dbfread>=2.0.7

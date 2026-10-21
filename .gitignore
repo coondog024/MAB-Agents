@@ -1,0 +1,13 @@
+.env
+shop.toml
+*.db
+__pycache__/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+# the shop's own knowledge folder that `mab init` creates (PDFs, DRP agreements, notes);
+# the package's seed docs in mab_agents/data/knowledge/ are tracked
+/knowledge/
+!mab_agents/data/knowledge/
+ems_inbox/
