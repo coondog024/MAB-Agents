@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e .
+      - run: python -m unittest discover -s tests -v
+      - name: Offline smoke test
+        env:
+          MAB_DB: /tmp/smoke.db
+        run: |
+          mab init
+          mab board
+          mab audit mab_agents/data/sample_estimate.csv --year 2021
+          mab msg 26-1042
+          mab brief

@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mab-agents"
+version = "0.1.0"
+description = "A fleet of AI agents tailored to Mullikin's Auto Body, a collision repair shop."
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=1.17,<2",
+    "python-dotenv>=1.0",
+]
+
+[project.scripts]
+mab = "mab_agents.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["mab_agents*"]
+
+[tool.setuptools.package-data]
+mab_agents = ["data/*.json", "data/*.csv", "shop.example.toml"]

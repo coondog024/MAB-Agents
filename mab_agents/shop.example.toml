@@ -1,0 +1,58 @@
+# Shop profile. Copy to shop.toml and edit. Everything the agents say about the
+# shop (name, hours, rates, DRPs, targets) comes from here, never from the model.
+
+[shop]
+name = "Mullikin's Auto Body"
+short_name = "Mullikin's"
+phone = "(000) 000-0000"
+address = "123 Main St, Anytown, MD 00000"
+state = "MD"                 # drives the total-loss threshold lookup
+hours = "Mon-Fri 7:30am-5:30pm, Sat by appointment"
+website = "https://example.com"
+review_url = "https://g.page/r/your-google-review-link"
+manager = "Shop Manager"
+# Certifications you actually hold. Agents only cite these.
+certifications = ["I-CAR Gold Class"]
+# Direct repair program (DRP) partners. Agents follow each carrier's rules listed below.
+drps = ["Example Mutual", "Sample Insurance"]
+
+[rates]
+body = 58.00
+refinish = 58.00
+mechanical = 110.00
+structural = 75.00
+diagnostic = 125.00
+paint_materials_per_hour = 38.00
+shop_materials_per_hour = 4.00
+storage_per_day = 65.00
+teardown_fee = 250.00
+
+[targets]
+touch_time_hours_per_day = 3.5      # labor hours applied per calendar day in production
+cycle_time_days = 9.0               # keys-to-keys average
+supplement_ratio_max = 0.30         # supplement $ / original estimate $
+csi_min = 92.0
+parts_gross_profit = 0.28
+labor_gross_profit = 0.60
+stalled_after_days = 2              # no stage change for this many days = flag it
+
+[sms]
+max_chars = 300
+signature = "- Mullikin's Auto Body"
+
+# Per-carrier rules the Parts and Insurance agents follow. Add one block per DRP.
+[[carrier_rules]]
+name = "Example Mutual"
+parts_preference = "OEM on current-year, aftermarket CAPA-certified allowed on 2+ model years for cosmetic parts, recycled allowed on assemblies"
+supplement_photos_required = true
+pre_post_scan_covered = true
+rental_max_days = 30
+notes = "Submit supplements through the carrier portal within 24h of teardown."
+
+[[carrier_rules]]
+name = "Sample Insurance"
+parts_preference = "OEM only on vehicles under 12 months, otherwise aftermarket allowed on bumper covers and lamps"
+supplement_photos_required = true
+pre_post_scan_covered = true
+rental_max_days = 25
+notes = "Call the desk adjuster before any structural pull."

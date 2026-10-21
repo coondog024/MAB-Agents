@@ -1,0 +1,93 @@
+{
+  "base_date": "2026-10-21",
+  "ros": [
+    {
+      "ro_number": "26-1042",
+      "customer": {"name": "Dana Whitfield", "phone": "410-555-0142", "email": "dana@example.com", "preferred_contact": "sms"},
+      "vehicle": {"year": 2021, "make": "Toyota", "model": "RAV4 XLE", "vin": "2T3P1RFV5MC000000", "color": "Magnetic Gray Metallic", "mileage": 41230, "paint_code": "1G3"},
+      "insurer": "Example Mutual", "claim_number": "EM-2026-778812", "adjuster": "Chris Park", "deductible": 500,
+      "stage": "parts_ordered", "drivable": false, "rental": true,
+      "opened": "2026-10-13", "dropped_off": "2026-10-14", "promised": "2026-10-28", "stage_changed": "2026-10-17T15:10:00",
+      "original_estimate_total": 4120.00, "airbags_deployed": false, "adas_equipped": true,
+      "lines": [
+        {"line": 1, "operation": "replace", "description": "Front bumper cover", "labor_hours": 2.1, "labor_type": "body", "paint_hours": 2.8, "part_type": "aftermarket", "part_number": "52119-0R918", "qty": 1, "part_price": 412.50},
+        {"line": 2, "operation": "replace", "description": "Front grille", "labor_hours": 0.4, "labor_type": "body", "part_type": "oem", "part_number": "53101-0R080", "qty": 1, "part_price": 289.00},
+        {"line": 3, "operation": "replace", "description": "RT headlamp assembly", "labor_hours": 0.6, "labor_type": "body", "part_type": "oem", "part_number": "81110-0R160", "qty": 1, "part_price": 1185.00},
+        {"line": 4, "operation": "repair", "description": "Hood", "labor_hours": 3.5, "labor_type": "body", "paint_hours": 3.2},
+        {"line": 5, "operation": "replace", "description": "RT fender", "labor_hours": 1.8, "labor_type": "body", "paint_hours": 2.4, "part_type": "oem", "part_number": "53801-0R090", "qty": 1, "part_price": 398.00},
+        {"line": 6, "operation": "replace", "description": "Radiator support", "labor_hours": 4.5, "labor_type": "body", "part_type": "oem", "part_number": "53201-0R060", "qty": 1, "part_price": 610.00},
+        {"line": 7, "operation": "replace", "description": "A/C condenser", "labor_hours": 1.2, "labor_type": "mechanical", "part_type": "oem", "part_number": "88460-0R110", "qty": 1, "part_price": 377.00},
+        {"line": 8, "operation": "additional", "description": "Pre-repair scan", "labor_hours": 0.5, "labor_type": "diagnostic"}
+      ],
+      "parts": [
+        {"description": "Front bumper cover", "part_number": "52119-0R918", "part_type": "aftermarket", "qty": 1, "vendor": "Keystone", "price": 412.50, "status": "backordered", "eta": "2026-10-24", "line": 1},
+        {"description": "Front grille", "part_number": "53101-0R080", "part_type": "oem", "qty": 1, "vendor": "Toyota dealer", "price": 289.00, "status": "received", "eta": "2026-10-19", "line": 2},
+        {"description": "RT headlamp assembly", "part_number": "81110-0R160", "part_type": "oem", "qty": 1, "vendor": "Toyota dealer", "price": 1185.00, "status": "ordered", "eta": "2026-10-20", "line": 3},
+        {"description": "RT fender", "part_number": "53801-0R090", "part_type": "oem", "qty": 1, "vendor": "Toyota dealer", "price": 398.00, "status": "received", "eta": "2026-10-19", "line": 5},
+        {"description": "Radiator support", "part_number": "53201-0R060", "part_type": "oem", "qty": 1, "vendor": "Toyota dealer", "price": 610.00, "status": "received", "eta": "2026-10-19", "line": 6},
+        {"description": "A/C condenser", "part_number": "88460-0R110", "part_type": "oem", "qty": 1, "vendor": "Toyota dealer", "price": 377.00, "status": "received", "eta": "2026-10-19", "line": 7}
+      ],
+      "notes": [
+        {"at": "2026-10-14T09:12:00", "author": "writer", "text": "Front-end hit, towed in. Carrier photo estimate 4120.00; teardown shows rad support and condenser."},
+        {"at": "2026-10-17T15:10:00", "author": "parts", "text": "Supplement approved; parts ordered. Bumper cover on backorder."}
+      ]
+    },
+    {
+      "ro_number": "26-1047",
+      "customer": {"name": "Marcus Lee", "phone": "443-555-0177", "email": "", "preferred_contact": "sms"},
+      "vehicle": {"year": 2019, "make": "Ford", "model": "F-150 XLT", "vin": "1FTEW1E5XKF000000", "color": "Oxford White", "mileage": 88010, "paint_code": "YZ"},
+      "insurer": "", "claim_number": "", "adjuster": "", "deductible": 0,
+      "stage": "body", "drivable": true, "rental": false,
+      "opened": "2026-10-10", "dropped_off": "2026-10-15", "promised": "2026-10-23", "stage_changed": "2026-10-17T08:00:00",
+      "original_estimate_total": 3260.00, "airbags_deployed": false, "adas_equipped": true,
+      "lines": [
+        {"line": 1, "operation": "repair", "description": "LT quarter panel", "labor_hours": 6.0, "labor_type": "body", "paint_hours": 3.5},
+        {"line": 2, "operation": "repair", "description": "LT rear door", "labor_hours": 2.5, "labor_type": "body", "paint_hours": 2.6},
+        {"line": 3, "operation": "blend", "description": "LT front door", "paint_hours": 1.4, "labor_type": "refinish"},
+        {"line": 4, "operation": "additional", "description": "Feather, prime & block", "labor_hours": 1.5, "labor_type": "body", "paint_hours": 1.0},
+        {"line": 5, "operation": "additional", "description": "Cover car for overspray", "labor_hours": 0.5, "labor_type": "refinish"},
+        {"line": 6, "operation": "additional", "description": "Color tint and spray-out", "labor_hours": 0.5, "labor_type": "refinish"},
+        {"line": 7, "operation": "additional", "description": "Pre-repair scan", "labor_hours": 0.5, "labor_type": "diagnostic"},
+        {"line": 8, "operation": "additional", "description": "Post-repair scan", "labor_hours": 0.5, "labor_type": "diagnostic"}
+      ],
+      "parts": [],
+      "notes": [{"at": "2026-10-15T08:30:00", "author": "writer", "text": "Customer pay. Parking lot sideswipe. Customer wants it back by the 23rd for a trip."}]
+    },
+    {
+      "ro_number": "26-1051",
+      "customer": {"name": "Priya Natarajan", "phone": "301-555-0163", "email": "priya@example.com", "preferred_contact": "sms"},
+      "vehicle": {"year": 2022, "make": "Honda", "model": "CR-V EX-L", "vin": "7FARW2H84NE000000", "color": "Platinum White Pearl", "mileage": 23890, "paint_code": "NH-883P"},
+      "insurer": "Sample Insurance", "claim_number": "SI-44-190233", "adjuster": "Taylor Brooks", "deductible": 1000,
+      "stage": "approval", "drivable": true, "rental": true,
+      "opened": "2026-10-19", "dropped_off": "2026-10-20", "promised": null, "stage_changed": "2026-10-21T07:45:00",
+      "original_estimate_total": 2890.00, "airbags_deployed": false, "adas_equipped": true,
+      "lines": [
+        {"line": 1, "operation": "replace", "description": "Rear bumper cover", "labor_hours": 1.9, "labor_type": "body", "paint_hours": 2.6, "part_type": "oem", "part_number": "04715-3A0-A90ZZ", "qty": 1, "part_price": 455.00},
+        {"line": 2, "operation": "replace", "description": "LT tail lamp assembly", "labor_hours": 0.4, "labor_type": "body", "part_type": "oem", "part_number": "33550-3A0-A01", "qty": 1, "part_price": 312.00},
+        {"line": 3, "operation": "repair", "description": "Liftgate", "labor_hours": 2.0, "labor_type": "body", "paint_hours": 2.8},
+        {"line": 4, "operation": "replace", "description": "Rear bumper park sensor", "labor_hours": 0.3, "labor_type": "body", "part_type": "oem", "part_number": "39680-TZA-A01", "qty": 2, "part_price": 98.00}
+      ],
+      "parts": [],
+      "notes": [{"at": "2026-10-20T10:05:00", "author": "writer", "text": "Rear-ended at low speed. Teardown shows cracked reinforcement bar; supplement sent 10/21 via portal."}]
+    },
+    {
+      "ro_number": "26-1033",
+      "customer": {"name": "Ellen Ortiz", "phone": "240-555-0131", "email": "", "preferred_contact": "sms"},
+      "vehicle": {"year": 2018, "make": "Subaru", "model": "Outback", "vin": "4S4BSANC9J3000000", "color": "Crystal White Pearl", "mileage": 101400, "paint_code": "K1X"},
+      "insurer": "Example Mutual", "claim_number": "EM-2026-771190", "adjuster": "Chris Park", "deductible": 250,
+      "stage": "delivered", "drivable": true, "rental": true,
+      "opened": "2026-09-29", "dropped_off": "2026-10-01", "promised": "2026-10-09", "delivered": "2026-10-09", "stage_changed": "2026-10-09T16:20:00",
+      "original_estimate_total": 2410.00, "airbags_deployed": false, "adas_equipped": true,
+      "lines": [
+        {"line": 1, "operation": "replace", "description": "Windshield", "labor_hours": 0, "labor_type": "glass", "part_type": "oem", "part_number": "65009AL04A", "qty": 1, "part_price": 612.00, "note": "sublet glass"},
+        {"line": 2, "operation": "sublet", "description": "EyeSight camera calibration", "labor_hours": 0, "labor_type": "sublet", "qty": 1, "part_price": 375.00},
+        {"line": 3, "operation": "repair", "description": "Front bumper cover", "labor_hours": 1.5, "labor_type": "body", "paint_hours": 2.4},
+        {"line": 4, "operation": "additional", "description": "Pre-repair scan", "labor_hours": 0.5, "labor_type": "diagnostic"},
+        {"line": 5, "operation": "additional", "description": "Post-repair scan", "labor_hours": 0.5, "labor_type": "diagnostic"},
+        {"line": 6, "operation": "additional", "description": "Clean and detail vehicle", "labor_hours": 1.0, "labor_type": "body"}
+      ],
+      "parts": [{"description": "Windshield", "part_number": "65009AL04A", "part_type": "oem", "qty": 1, "vendor": "Glass vendor", "price": 612.00, "status": "received", "eta": "2026-10-03", "line": 1}],
+      "notes": [{"at": "2026-10-09T16:20:00", "author": "front desk", "text": "Delivered. Customer happy; review request sent."}]
+    }
+  ]
+}

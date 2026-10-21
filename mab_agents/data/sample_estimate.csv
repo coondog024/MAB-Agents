@@ -1,0 +1,9 @@
+line,operation,description,labor_hours,labor_type,paint_hours,part_type,part_number,qty,part_price,note
+1,replace,Front bumper cover,2.1,body,2.8,aftermarket,52119-0R918,1,412.50,
+2,replace,Front grille,0.4,body,0,oem,53101-0R080,1,289.00,
+3,replace,RT headlamp assembly,0.6,body,0,oem,81110-0R160,1,1185.00,
+4,repair,Hood,3.5,body,3.2,none,,1,0,
+5,replace,RT fender,1.8,body,2.4,oem,53801-0R090,1,398.00,
+6,replace,Radiator support,4.5,body,0,oem,53201-0R060,1,610.00,
+7,replace,A/C condenser,1.2,mechanical,0,oem,88460-0R110,1,377.00,
+8,repair,RT front wheel,0,body,0,none,,1,0,wheel reconditioning sublet TBD
