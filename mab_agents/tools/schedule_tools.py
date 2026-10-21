@@ -50,6 +50,8 @@ def wip_board(ros: list[RepairOrder], today: date | None = None) -> dict[str, An
             "days_in_stage": ro.days_in_stage(_end_of(today)) if ro.stage_changed else None,
             "promised": ro.promised,
             "rental": ro.rental,
+            "crisma_status": ro.source_status,
+            "flags": ro.flags,
         })
     hours_in_production = sum(ro.labor_hours() + ro.paint_hours() for ro in ros if ro.stage in PRODUCTION_STAGES)
     return {

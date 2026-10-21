@@ -7,7 +7,8 @@ from .base import Agent, Ctx, beta_tool, j
 
 INSTRUCTIONS = """
 You review damage estimates the way a senior estimator does before they leave the shop or go to the carrier.
-- Always run `audit_estimate_text` (pasted CSV/JSON) or `audit_repair_order` (RO on file) first. Report the findings grouped by severity, each with the line that would go on the estimate.
+- Always run `audit_estimate_text` (pasted CSV/JSON) or `audit_repair_order` (RO on file) first. The result has two parts: `findings` (structural checks: blends, scans, corrosion protection, A/C, alignment) and `catalogue` (the shop's own not-included catalogue, 51 rules: triggered = missing, verify_if_equipped = depends on an option you must confirm, satisfied = already on the estimate). Report triggered items grouped by severity, each with the line that would go on the estimate; list verify-if-equipped items as questions for the writer.
+- If the estimate came from CCC via EMS, `written_at_rates` and `rate_warnings` show the carrier's labor rates versus our posted rates; call out any rate below posted as a short-pay to address before the car is delivered.
 - Then run `estimate_totals` so the writer sees labor by type, refinish hours, materials and parts at our posted rates.
 - For each high finding, give a one-sentence justification the carrier will accept: cite the operation as "not included" per the estimating system's procedure pages, or point to the OEM procedure that requires it, and say which photo proves it.
 - Blend logic: a refinished panel with an adjacent same-colour panel needs a blend unless the colour is a solid non-metallic and the writer confirms a match from a spray-out.
@@ -31,7 +32,7 @@ def build(ctx: Ctx) -> Agent:
         """
         lines = estimate_tools.parse_estimate(estimate)
         findings = estimate_tools.audit_estimate(lines, airbags_deployed=airbags_deployed, adas_equipped=adas_equipped, model_year=model_year or None)
-        return j({"lines_parsed": len(lines), **estimate_tools.audit_report(findings)})
+        return j({"lines_parsed": len(lines), **estimate_tools.audit_report(findings, estimate_tools.evaluate_rules(lines))})
 
     @beta_tool
     def audit_repair_order(ro_number: str) -> str:
@@ -42,7 +43,10 @@ def build(ctx: Ctx) -> Agent:
         """
         ro = ctx.store.require(ro_number)
         findings = estimate_tools.audit_estimate(ro.lines, airbags_deployed=ro.airbags_deployed, adas_equipped=ro.adas_equipped, model_year=ro.vehicle.year)
-        return j({"ro": ro.ro_number, "vehicle": ro.vehicle.label(), "insurer": ro.insurer, "lines": [l.__dict__ for l in ro.lines], **estimate_tools.audit_report(findings)})
+        from ..ems import rate_notes
+
+        return j({"ro": ro.ro_number, "vehicle": ro.vehicle.label(), "insurer": ro.insurer, "estimate": {"id": ro.estimate_id, "supp_no": ro.supp_no, "system": ro.estimate_system, "totals": ro.estimate_totals, "written_at_rates": ro.labor_rates, "rate_warnings": rate_notes(ro, ctx.rates())},
+                  "lines": [l.__dict__ for l in ro.lines], **estimate_tools.audit_report(findings, estimate_tools.evaluate_rules(ro.lines))})
 
     @beta_tool
     def estimate_totals(estimate: str = "", ro_number: str = "") -> str:

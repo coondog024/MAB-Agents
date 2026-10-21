@@ -190,6 +190,8 @@ def ro_summary(ro: RepairOrder, today: date | None = None) -> dict[str, Any]:
         "vehicle": ro.vehicle.label(),
         "stage": ro.stage,
         "stage_label": STAGE_LABELS[ro.stage],
+        "crisma_status": ro.source_status,
+        "flags": ro.flags,
         "insurer": ro.insurer or "Customer pay",
         "claim_number": ro.claim_number,
         "adjuster": ro.adjuster,
@@ -271,6 +273,12 @@ def update_queue(ros: list[RepairOrder], last_messages: dict[str, dict], today: 
         if ro.stage == "approval" and ro.days_in_stage(datetime.combine(today, datetime.max.time())) >= 1:
             reasons.append(f"Awaiting {ro.insurer or 'customer'} approval: chase it")
             priority = min(priority, 2)
+        if "total_loss" in ro.flags:
+            reasons.append("CRISMA shows TOTAL LOSS: use the total-loss script; storage clock and personal items")
+            priority = min(priority, 2)
+        if "backorder" in ro.flags:
+            reasons.append("CRISMA shows a part on backorder: customer needs the new ETA")
+            priority = min(priority, 2)
         if reasons:
             out.append({
                 "priority": priority,
@@ -279,6 +287,7 @@ def update_queue(ros: list[RepairOrder], last_messages: dict[str, dict], today: 
                 "phone": ro.customer.phone,
                 "vehicle": ro.vehicle.label(),
                 "stage": STAGE_LABELS[ro.stage],
+                "crisma_status": ro.source_status,
                 "rental": ro.rental,
                 "reasons": reasons,
                 "suggested_text_stage": ro.stage,

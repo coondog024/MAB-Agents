@@ -17,8 +17,9 @@ certifications = ["I-CAR Gold Class"]
 warranty = "Limited lifetime warranty on workmanship and paint for as long as you own the vehicle; parts carry the manufacturer's or vendor's warranty"
 # Total-loss rule for your state, verified against the current statute by a human: a percentage of ACV
 # like "75", or "TLF" for total-loss-formula states (repair + salvage >= ACV). Overrides the reference table.
+# Maryland: Transportation Article 11-152 uses 75% of fair market value. Re-check the statute yearly.
 total_loss_rule = "75"
-total_loss_rule_verified = "2026-01-01"
+total_loss_rule_verified = "2026-10-21"
 # Direct repair program (DRP) partners. Agents follow each carrier's rules listed below.
 drps = ["Example Mutual", "Sample Insurance"]
 
@@ -59,6 +60,47 @@ online_sources = ["the brand's dealer parts site", "RockAuto", "Amazon", "eBay M
 dir = "knowledge"                 # drop PDFs, .md, .txt, .csv here and run `mab kb sync`
 chunk_chars = 2200
 overlap_chars = 250
+# `mab kb fetch` downloads the URLs listed in knowledge/sources.toml into this folder.
+
+# CRISMA (FoxPro) shop management system. Read-only: MAB never writes to CRISMA tables.
+[crisma]
+data_dir = "M:/Crisma/data"       # folder holding BSRO.DBF and BSLOC.DBF (UNC paths work: //Mabserver/share/Crisma/data)
+ro_table = "BSRO.DBF"
+status_table = "BSLOC.DBF"
+skip_codes = ["NS", "DNR"]        # no-show / did not repair: not imported
+# LOCCD -> MAB stage. Codes not listed here fall back on dates: in-date set -> checked_in, else scheduled.
+[crisma.status_map]
+OL = "checked_in"                 # ON LOT (READY FOR REPAIRS)
+OLW = "approval"                  # ON LOT (NO AUTHORIZATION)
+OLP = "parts_ordered"             # ON LOT (NEED PARTS)
+TD = "blueprint"                  # DISASSEMBLY & SUPP. INSPECTION
+SUP = "approval"                  # WAITING FOR SUPP APPROVAL
+UPL = "parts_ordered"             # PART ON BACK ORDER
+NTC = "parts_ordered"             # NEED TO CALL WHEN PART IS HERE
+CPH = "parts_received"            # CALLED THAT PART IS HERE
+IB = "body"                       # IN BODY REPAIR
+IBS = "body"                      # IN BODY REPAIR - SUPP PARTS ON ORDER
+SUB = "body"                      # OUT FOR SUBLET REPAIRS
+CBK = "body"                      # COME BACK IP
+REF = "paint"                     # IN PAINT PROCESS
+IRA = "reassembly"                # IN REASSEMBLY
+CLN = "qc"                        # IN CLEAN UP
+FI = "qc"                         # READY FOR FINAL INSPECTION
+VF = "ready"                      # READY FOR CUSTOMER PICKUP
+VFS = "ready"                     # ON LOT FINISHED / HAS SUPPLEMENT
+CA = "delivered"                  # CUSTOMER ACCEPTED
+CAS = "delivered"                 # CUST ACCEPT NEED TO SEND SUPP.
+CSS = "delivered"                 # CUST ACCEPT SUPP SENT TO INS CO
+TL = "approval"                   # TOTAL LOSS (flagged total_loss)
+
+# CCC ONE EMS export. CCC writes one job per UNQFILE_ID: <id>.env .veh .ad1 .ad2 .lin .ttl ... (DBF),
+# or a single <id>.EST XML file depending on the export profile.
+[ems]
+export_dir = "//Mabserver/apps/CCC/EMSOUT"
+poll_seconds = 30
+# How to pick the RO number: first non-empty of these EMS fields, else "E-<UNQFILE_ID>".
+# Put the CRISMA RO number in CCC's RO field and the two systems line up exactly.
+ro_number_fields = ["ENV.RO_ID", "AD2.EST_FILENO"]
 
 [sms]
 max_chars = 300

@@ -156,7 +156,8 @@ class KnowledgeBase:
             for path in sorted(p for p in self.docs_dir.rglob("*") if p.is_file()):
                 rel = str(path.relative_to(self.docs_dir))
                 if path.suffix.lower() not in TEXT_SUFFIXES | PDF_SUFFIXES or path.name.startswith("."):
-                    stats["skipped"].append(rel)
+                    if path.suffix.lower() not in {".toml", ".json", ".db"}:
+                        stats["skipped"].append(rel)
                     continue
                 seen.add(rel)
                 sha = _sha(path.read_bytes())

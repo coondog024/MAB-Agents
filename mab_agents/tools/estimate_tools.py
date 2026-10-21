@@ -288,11 +288,78 @@ def audit_estimate(
     return f
 
 
-def audit_report(findings: list[Finding]) -> dict[str, Any]:
-    return {
+def audit_report(findings: list[Finding], rule_results: dict[str, Any] | None = None) -> dict[str, Any]:
+    report = {
         "count": len(findings),
         "high": sum(1 for x in findings if x.severity == "high"),
         "medium": sum(1 for x in findings if x.severity == "medium"),
         "low": sum(1 for x in findings if x.severity == "low"),
         "findings": [asdict(x) for x in findings],
+    }
+    if rule_results is not None:
+        report["catalogue"] = rule_results
+    return report
+
+
+# ---------------------------------------------------------------------------
+# The shop's own not-included catalogue (data/not_included_rules.json)
+# ---------------------------------------------------------------------------
+_RULES_CACHE: list[dict[str, Any]] | None = None
+
+
+def load_rules(path: str | None = None) -> list[dict[str, Any]]:
+    """Rules are plain data so the shop can edit them without touching code."""
+    global _RULES_CACHE
+    if path is None and _RULES_CACHE is not None:
+        return _RULES_CACHE
+    from pathlib import Path
+
+    p = Path(path) if path else Path(__file__).resolve().parents[1] / "data" / "not_included_rules.json"
+    rules = json.loads(p.read_text(encoding="utf-8"))["rules"]
+    if path is None:
+        _RULES_CACHE = rules
+    return rules
+
+
+def _corpus(lines: Iterable[EstimateLine]) -> str:
+    return " \n ".join(f"{l.operation} {l.description} {l.note}" for l in lines).lower()
+
+
+def evaluate_rules(lines: list[EstimateLine], *, features: set[str] | None = None, rules: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    """Run the catalogue the way the shop's rule engine does: a rule applies when any
+    trig_any term (or all trig_all terms) appears anywhere on the estimate; it is satisfied
+    when any already_term appears; otherwise it is triggered. Rules that depend on a
+    vehicle feature (front radar, cameras, BSM, park assist, fog lamps) are reported as
+    'verify if equipped' unless the feature is confirmed."""
+    corpus = _corpus(lines)
+    rules = rules or load_rules()
+    features = {f.lower() for f in (features or set())}
+    triggered, verify, satisfied = [], [], []
+    for r in rules:
+        trig_any = [t.lower() for t in r.get("trig_any", [])]
+        trig_all = [t.lower() for t in r.get("trig_all", [])]
+        applies = any(t in corpus for t in trig_any) if trig_any else False
+        if trig_all:
+            applies = applies or all(t in corpus for t in trig_all)
+        if not applies:
+            continue
+        already = [t.lower() for t in r.get("already_terms", [])]
+        item = {"key": r["key"], "title": r["title"], "category": r.get("category", ""), "severity": r.get("severity", "medium"), "why": r.get("why", "")}
+        if already and any(t in corpus for t in already):
+            satisfied.append(item)
+            continue
+        needs = [f.lower() for f in r.get("feature_requires", [])]
+        if needs and not any(f in features for f in needs):
+            verify.append({**item, "if_equipped": needs})
+        else:
+            triggered.append(item)
+    order = {"high": 0, "medium": 1, "low": 2}
+    triggered.sort(key=lambda x: order.get(x["severity"], 1))
+    applicable = len(triggered) + len(satisfied) + len(verify)
+    return {
+        "triggered": triggered,
+        "verify_if_equipped": verify,
+        "satisfied": satisfied,
+        "score": round(len(satisfied) / applicable * 100) if applicable else 100,
+        "counts": {"triggered": len(triggered), "verify": len(verify), "satisfied": len(satisfied), "rules": len(rules)},
     }

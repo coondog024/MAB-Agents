@@ -1,0 +1,1120 @@
+{
+ "source": "Mullikin's Auto Body not-included operations catalogue (from the Flask-EST_EMS project); edit freely. Terms are case-insensitive substrings matched against every line description and operation on the estimate.",
+ "rules": [
+  {
+   "key": "pre_scan",
+   "title": "Pre-repair scan (if applicable)",
+   "why": "Pre-repair DTC documentation before disassembly is commonly required on many vehicles.",
+   "severity": "high",
+   "category": "Diagnostics",
+   "trig_any": [
+    "Replace",
+    "R&I",
+    "Remove",
+    "Install",
+    "Bumper",
+    "Headlamp",
+    "Air Bag",
+    "Module"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "Pre Repair Scan",
+    "Pre-Repair Scan",
+    "pre scan",
+    "pre-scan"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "post_scan",
+   "title": "Post-repair scan + clear/verify DTCs",
+   "why": "Post-repair scan documents successful repair and verifies no new faults remain.",
+   "severity": "high",
+   "category": "Diagnostics",
+   "trig_any": [
+    "Replace",
+    "R&I",
+    "Remove",
+    "Install",
+    "Bumper",
+    "Headlamp",
+    "Air Bag",
+    "Module"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "Post Repair Scan",
+    "Post-Repair Scan",
+    "post scan",
+    "post-scan"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "battery_support",
+   "title": "Battery support / power maintainer (as needed)",
+   "why": "Voltage stability prevents module faults during scan/calibration/programming.",
+   "severity": "medium",
+   "category": "Diagnostics",
+   "trig_any": [
+    "Scan",
+    "Calibration",
+    "Module",
+    "Programming",
+    "Diag",
+    "Relearn"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "battery support",
+    "power supply",
+    "maintainer",
+    "memory saver"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "baseline_health_check",
+   "title": "Baseline health check / quick code check (if no formal scan line)",
+   "why": "If no scan line exists, consider documenting at least a baseline code check where appropriate.",
+   "severity": "medium",
+   "category": "Diagnostics",
+   "trig_any": [
+    "Module",
+    "Air Bag",
+    "ADAS",
+    "Calibration",
+    "Programming",
+    "Electrical"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "scan",
+    "code check",
+    "health check",
+    "DTC"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "scan_report_attach",
+   "title": "Attach scan reports (pre/post) / print-to-file",
+   "why": "Scan reports improve payment success and are good documentation.",
+   "severity": "low",
+   "category": "Admin",
+   "trig_any": [
+    "scan",
+    "DTC",
+    "diagnostic"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "report",
+    "attach",
+    "pdf",
+    "print",
+    "documentation"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "module_programming",
+   "title": "Module programming / setup (if module replaced/updated)",
+   "why": "Many modules require setup/programming after replacement.",
+   "severity": "high",
+   "category": "Diagnostics",
+   "trig_any": [
+    "Module",
+    "ECU",
+    "PCM",
+    "BCM",
+    "SDM",
+    "ABS",
+    "TCM"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "program",
+    "coding",
+    "flash",
+    "setup",
+    "configuration"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "module_relearn",
+   "title": "Module relearn / initialization (if required)",
+   "why": "Relearn/initialization procedures may be required after certain R&I or replacements.",
+   "severity": "medium",
+   "category": "Diagnostics",
+   "trig_any": [
+    "relearn",
+    "initialize",
+    "module",
+    "reset",
+    "calibration"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "relearn",
+    "initialize",
+    "setup",
+    "calibration"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "immobilizer_key_relearn",
+   "title": "Immobilizer / key relearn (if applicable)",
+   "why": "Some vehicles require key/immobilizer pairing after battery/module events.",
+   "severity": "medium",
+   "category": "Diagnostics",
+   "trig_any": [
+    "BCM",
+    "PCM",
+    "Module",
+    "Key",
+    "Ignition",
+    "Immobilizer"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "immobilizer",
+    "key relearn",
+    "security relearn",
+    "PATS"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "battery_recharge",
+   "title": "Battery recharge / test (if needed)",
+   "why": "Battery stabilization/recharge may be needed during extended key-on diagnostics.",
+   "severity": "low",
+   "category": "Diagnostics",
+   "trig_any": [
+    "Scan",
+    "Calibration",
+    "Programming",
+    "Diag"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "battery recharge",
+    "battery test",
+    "charge"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "reset_memory_after_batt_disconnect",
+   "title": "Reset electronic memory functions after battery disconnect",
+   "why": "Memory resets are commonly required after battery disconnect events.",
+   "severity": "low",
+   "category": "Diagnostics",
+   "trig_any": [
+    "battery",
+    "disconnect",
+    "module",
+    "scan",
+    "calibration"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "reset memory",
+    "memory reset",
+    "radio code",
+    "clock reset"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "esd_protection",
+   "title": "ESD / electronics handling precautions (if servicing modules/sensors)",
+   "why": "Electronic modules/sensors are sensitive to voltage fluctuations and ESD.",
+   "severity": "low",
+   "category": "Diagnostics",
+   "trig_any": [
+    "Module",
+    "Sensor",
+    "Air Bag",
+    "SRS",
+    "ADAS"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "ESD",
+    "electrostatic",
+    "static discharge"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "dtc_clear_verify",
+   "title": "Clear codes + re-check after repairs (if applicable)",
+   "why": "Clearing/confirming DTCs ensures no latent faults remain.",
+   "severity": "medium",
+   "category": "Diagnostics",
+   "trig_any": [
+    "Scan",
+    "DTC",
+    "Module",
+    "Diag"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "clear codes",
+    "erase codes",
+    "verify DTC"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "disable_srs_system",
+   "title": "Disable SRS system (if working near airbags/sensors)",
+   "why": "SRS disable steps may be required beyond simple battery disconnect depending on OEM.",
+   "severity": "high",
+   "category": "Safety",
+   "trig_any": [
+    "Air Bag",
+    "Airbag",
+    "SRS",
+    "Impact Sensor",
+    "Pretensioner",
+    "Seat Belt"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "disable srs",
+    "srs disable",
+    "airbag disable"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "srs_post_verify",
+   "title": "SRS/airbag system scan + post-repair verification",
+   "why": "If SRS components are disturbed, document scan/verification post-repair.",
+   "severity": "high",
+   "category": "Safety",
+   "trig_any": [
+    "Air Bag",
+    "Airbag",
+    "SRS",
+    "Impact Sensor",
+    "Pretensioner",
+    "Seat Belt"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "SRS scan",
+    "airbag scan",
+    "restraint scan",
+    "post SRS"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "seatbelt_inspection",
+   "title": "Seat belt inspection / replacement decision (if crash severity warrants)",
+   "why": "Some OEMs recommend belt component inspection/replacement after occupant loading.",
+   "severity": "medium",
+   "category": "Safety",
+   "trig_any": [
+    "Air Bag",
+    "Airbag",
+    "Impact Sensor",
+    "Pretensioner"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "seat belt inspect",
+    "belt inspection",
+    "pretensioner"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "occupant_classification_reset",
+   "title": "Occupant classification/seat sensor calibration (if applicable)",
+   "why": "Seat sensors/OCS may require calibration after seat/SRS events.",
+   "severity": "medium",
+   "category": "Safety",
+   "trig_any": [
+    "Seat",
+    "Air Bag",
+    "SRS",
+    "OCS",
+    "Occupant"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "occupant",
+    "OCS",
+    "seat calibration",
+    "seat sensor"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "airbag_module_reset",
+   "title": "Airbag module reset/replace procedure (if deployed)",
+   "why": "Airbag module often requires reset procedures or replacement after deployment.",
+   "severity": "high",
+   "category": "Safety",
+   "trig_any": [
+    "deployed",
+    "Air Bag",
+    "Airbag",
+    "SDM",
+    "RCM"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "module reset",
+    "SDM reset",
+    "RCM reset",
+    "replace SDM"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "steering_column_inspection",
+   "title": "Steering column inspection (binding/length/deformation)",
+   "why": "Collapsible columns should be inspected after significant impacts.",
+   "severity": "medium",
+   "category": "Safety",
+   "trig_any": [
+    "Steering Column",
+    "Steering",
+    "Air Bag",
+    "Front Impact"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "inspect column",
+    "column inspection",
+    "binding"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "hv_disable",
+   "title": "Disable high voltage system (hybrid/EV) if applicable",
+   "why": "Hybrid/EV repairs often require HV disable steps and PPE.",
+   "severity": "high",
+   "category": "Safety",
+   "trig_any": [
+    "Hybrid",
+    "EV",
+    "High Voltage",
+    "Battery Pack",
+    "Inverter"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "HV disable",
+    "high voltage disable",
+    "orange cable"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "airbag_no_refinish",
+   "title": "Verify airbag components are not refinished",
+   "why": "Airbag components should not be refinished; confirm estimate doesn\u2019t include refinish on SRS parts.",
+   "severity": "medium",
+   "category": "Safety",
+   "trig_any": [
+    "Air Bag",
+    "Airbag",
+    "SRS",
+    "Refinish",
+    "Paint"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "no refinish",
+    "do not refinish",
+    "SRS not refinished"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "wheel_alignment_check",
+   "title": "Wheel alignment check (and alignment if needed)",
+   "why": "Front-end structural/suspension disturbance should trigger alignment verification.",
+   "severity": "high",
+   "category": "Mechanical",
+   "trig_any": [
+    "Apron",
+    "Fender",
+    "Strut",
+    "Control Arm",
+    "Tie Rod",
+    "Steering",
+    "Raise and support"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "alignment",
+    "align",
+    "toe",
+    "camber",
+    "caster",
+    "four wheel"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "steering_angle_reset",
+   "title": "Steering angle sensor reset / relearn (if equipped)",
+   "why": "After alignment or steering/suspension work, some vehicles require SAS relearn.",
+   "severity": "medium",
+   "category": "Mechanical",
+   "trig_any": [
+    "alignment",
+    "tie rod",
+    "steering",
+    "rack",
+    "control arm"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "steering angle",
+    "sas reset",
+    "relearn sas"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "yaw_rate_cal",
+   "title": "Yaw rate / zero-point calibration (if equipped)",
+   "why": "Some stability systems require zero-point calibrations after alignment/repairs.",
+   "severity": "medium",
+   "category": "Mechanical",
+   "trig_any": [
+    "alignment",
+    "steering angle",
+    "SAS",
+    "ABS",
+    "VSC",
+    "ESC"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "yaw rate",
+    "zero point",
+    "zero-point"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "ride_height_cal",
+   "title": "Ride height calibration (air suspension/level sensors) if equipped",
+   "why": "Ride height/level sensors may require calibration after suspension/height changes.",
+   "severity": "medium",
+   "category": "Mechanical",
+   "trig_any": [
+    "air suspension",
+    "level sensor",
+    "ride height",
+    "calibration",
+    "strut"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "ride height calibration",
+    "level calibration"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "torque_suspension_fasteners",
+   "title": "Torque-to-spec suspension/steering fasteners (document if performed)",
+   "why": "Many repairs require torque-to-spec documentation (esp. suspension/steering components).",
+   "severity": "low",
+   "category": "Mechanical",
+   "trig_any": [
+    "Control Arm",
+    "Tie Rod",
+    "Strut",
+    "Steering",
+    "Rack",
+    "Knuckle"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "torque",
+    "torque to spec",
+    "torque check"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "headlamp_level_cal",
+   "title": "Auto headlamp leveling calibration (if equipped)",
+   "why": "Vehicles with auto-leveling headlamps may require calibration after front end work.",
+   "severity": "low",
+   "category": "Lighting",
+   "trig_any": [
+    "Headlamp",
+    "leveling",
+    "sensor",
+    "calibration"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "headlamp leveling",
+    "auto-level",
+    "level calibration"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "aim_headlamps",
+   "title": "Aim headlamps (if applicable)",
+   "why": "Lamp aiming is commonly not included with headlamp replacement operations.",
+   "severity": "high",
+   "category": "Lighting",
+   "trig_any": [
+    "Headlamp",
+    "Lamp Assy",
+    "Headlight"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "headlamp aim",
+    "aim headlamp",
+    "lamp aiming"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "fog_lamp_aim",
+   "title": "Fog lamp aim / verify beam pattern (if applicable)",
+   "why": "Fog lamp replacement can require aim/position verification.",
+   "severity": "low",
+   "category": "Lighting",
+   "trig_any": [
+    "Fog Lamp",
+    "Foglamp"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "fog lamp aim",
+    "foglamp aim",
+    "aim fog"
+   ],
+   "feature_requires": [
+    "fog_lamps"
+   ]
+  },
+  {
+   "key": "headlamp_function_check",
+   "title": "Headlamp function check / cycle test (if applicable)",
+   "why": "After lamp/actuator work, verify full functional operation.",
+   "severity": "medium",
+   "category": "Lighting",
+   "trig_any": [
+    "Headlamp Actuator",
+    "Headlamp Door",
+    "Headlamp Assembly",
+    "Headlamp"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "function test",
+    "cycle test",
+    "verify operation"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "lamp_connector_check",
+   "title": "Lamp wiring/connector check (if lamp removed/replaced)",
+   "why": "Lamp R&I often requires checking connectors/pigtails for damage and proper routing.",
+   "severity": "low",
+   "category": "Electrical",
+   "trig_any": [
+    "Headlamp",
+    "Tail Lamp",
+    "Lamp",
+    "Marker",
+    "Turn",
+    "Harness",
+    "Pigtail"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "pigtail",
+    "connector",
+    "repair wiring",
+    "harness repair"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "front_radar_cal",
+   "title": "Forward radar calibration / aiming (if equipped)",
+   "why": "Bumper/grille removal can disturb radar alignment; OEM may require recalibration.",
+   "severity": "high",
+   "category": "ADAS",
+   "trig_any": [
+    "Bumper Cover",
+    "Grille",
+    "Reinforcement",
+    "Impact Bar"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "radar calibration",
+    "radar aim",
+    "acc calibration",
+    "adas calibration"
+   ],
+   "feature_requires": [
+    "front_radar"
+   ]
+  },
+  {
+   "key": "front_camera_cal",
+   "title": "Front camera calibration (if equipped)",
+   "why": "Camera systems often require calibration after structural/bumper/windshield events.",
+   "severity": "high",
+   "category": "ADAS",
+   "trig_any": [
+    "Bumper Cover",
+    "Radiator Support",
+    "Windshield",
+    "Front End"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "camera calibration",
+    "lane camera calibration",
+    "adas camera"
+   ],
+   "feature_requires": [
+    "camera_system"
+   ]
+  },
+  {
+   "key": "rear_camera_cal",
+   "title": "Rear camera calibration / functional check (if equipped)",
+   "why": "Rear camera systems may require aiming/verification after rear repairs or camera R&I.",
+   "severity": "medium",
+   "category": "ADAS",
+   "trig_any": [
+    "Back Up Camera",
+    "Liftgate",
+    "Deck Lid",
+    "Rear Bumper",
+    "Camera"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "rear camera calibration",
+    "camera aim",
+    "camera learn"
+   ],
+   "feature_requires": [
+    "camera_system"
+   ]
+  },
+  {
+   "key": "surround_view_cal",
+   "title": "360/surround view calibration (if equipped)",
+   "why": "Multi-camera surround systems often require calibration after camera/bumper repairs.",
+   "severity": "high",
+   "category": "ADAS",
+   "trig_any": [
+    "surround",
+    "360",
+    "AVM",
+    "camera",
+    "bumper"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "surround calibration",
+    "360 calibration",
+    "AVM calibration"
+   ],
+   "feature_requires": [
+    "camera_system"
+   ]
+  },
+  {
+   "key": "park_assist_cal",
+   "title": "Park assist sensor learn / calibration (if equipped)",
+   "why": "Park sensors in bumper covers may need initialization/verification after R&I/refinish.",
+   "severity": "medium",
+   "category": "ADAS",
+   "trig_any": [
+    "Bumper Cover",
+    "Bumper",
+    "Sensor"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "park assist calibration",
+    "park sensor learn",
+    "parking assist calibration"
+   ],
+   "feature_requires": [
+    "park_assist"
+   ]
+  },
+  {
+   "key": "park_sensor_retainers",
+   "title": "Park sensor retainer/mount kit (often non-reusable) if applicable",
+   "why": "Sensor retainers/mounts often break or are one-time-use; add if required.",
+   "severity": "low",
+   "category": "ADAS",
+   "trig_any": [
+    "Park",
+    "Parking Sensor",
+    "Sensor",
+    "Bumper"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "retainer",
+    "mount kit",
+    "sensor bracket",
+    "sensor holder"
+   ],
+   "feature_requires": [
+    "park_assist"
+   ]
+  },
+  {
+   "key": "bsm_cal",
+   "title": "Blind spot monitor calibration/verification (if equipped)",
+   "why": "Quarter/bumper R&I can affect BSM sensor alignment; verification may be required.",
+   "severity": "high",
+   "category": "ADAS",
+   "trig_any": [
+    "Quarter",
+    "Rear Bumper",
+    "BSM",
+    "Blind Spot",
+    "Radar"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "blind spot calibration",
+    "bsm calibration",
+    "side radar calibration"
+   ],
+   "feature_requires": [
+    "bsm"
+   ]
+  },
+  {
+   "key": "acc_cal",
+   "title": "Adaptive cruise (ACC) calibration/aim (if equipped)",
+   "why": "ACC radar/sensor aiming may be required after front structure/bumper work.",
+   "severity": "high",
+   "category": "ADAS",
+   "trig_any": [
+    "Bumper",
+    "Grille",
+    "Reinforcement",
+    "Radar",
+    "ACC"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "ACC calibration",
+    "adaptive cruise calibration"
+   ],
+   "feature_requires": [
+    "front_radar"
+   ]
+  },
+  {
+   "key": "windshield_camera_cal",
+   "title": "Windshield camera calibration (if equipped)",
+   "why": "Windshield replacement or R&I may require camera calibration.",
+   "severity": "high",
+   "category": "ADAS",
+   "trig_any": [
+    "Windshield",
+    "Camera",
+    "ADAS"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "windshield camera calibration",
+    "static calibration",
+    "dynamic calibration"
+   ],
+   "feature_requires": [
+    "camera_system"
+   ]
+  },
+  {
+   "key": "measure_pre",
+   "title": "Structural measurement (pre-repair) / datum verification",
+   "why": "If rail/apron/core support involvement exists, pre-measure helps blueprint and justify repairs.",
+   "severity": "high",
+   "category": "Structural",
+   "trig_any": [
+    "Apron",
+    "Rail",
+    "Radiator Support",
+    "Core Support",
+    "Front End Panel"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "pre-measure",
+    "pre measure",
+    "3D",
+    "tram",
+    "datum",
+    "bench"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "measure_post",
+   "title": "Structural measurement (post-repair) / printout",
+   "why": "Post-measure documents vehicle returned to spec after structural operations.",
+   "severity": "high",
+   "category": "Structural",
+   "trig_any": [
+    "Apron",
+    "Rail",
+    "Radiator Support",
+    "Core Support",
+    "Front End Panel"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "post-measure",
+    "post measure",
+    "3D printout",
+    "final measure"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "frame_machine_setup",
+   "title": "Frame/bench setup time (if used)",
+   "why": "Setup varies by equipment and is commonly not included; add based on on-the-spot evaluation.",
+   "severity": "medium",
+   "category": "Structural",
+   "trig_any": [
+    "measure",
+    "rail",
+    "frame",
+    "pull",
+    "bench",
+    "jig"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "frame setup",
+    "bench setup",
+    "rack setup"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "pull_setup",
+   "title": "Pull setup / anchoring / tie-down time (if used)",
+   "why": "Anchoring and setting pulls is real time and often not captured.",
+   "severity": "medium",
+   "category": "Structural",
+   "trig_any": [
+    "pull",
+    "straighten",
+    "frame",
+    "rail",
+    "apron"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "anchoring",
+    "tie-down",
+    "pull setup"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "clamp_setup",
+   "title": "Clamping/holding fixtures setup (if required)",
+   "why": "Fixtures/clamps/holding tools setup can be needed for sectioning/welding fit-up.",
+   "severity": "medium",
+   "category": "Structural",
+   "trig_any": [
+    "section",
+    "weld",
+    "panel",
+    "rail",
+    "apron"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "fixture",
+    "clamp setup",
+    "holding fixture"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "fit_up_structural",
+   "title": "Structural fit-up / test-fit / gap checks",
+   "why": "Test-fitting panels/structure before weld/bond reduces comebacks; often missed on sheet.",
+   "severity": "medium",
+   "category": "Structural",
+   "trig_any": [
+    "replace",
+    "weld",
+    "bond",
+    "section",
+    "core support",
+    "rail",
+    "apron"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "test fit",
+    "fit-up",
+    "gap check"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "sectioning_setup",
+   "title": "Sectioning setup / cut line layout (if sectioning performed)",
+   "why": "Layout/measure/cut steps are real labor when sectioning panels.",
+   "severity": "medium",
+   "category": "Structural",
+   "trig_any": [
+    "section",
+    "sctn",
+    "cut in",
+    "cut line"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "layout",
+    "scribe",
+    "cut line"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "weld_test",
+   "title": "Weld test coupon / destructive test (if required)",
+   "why": "Some OEM/I-CAR procedures call for test welds when welding certain substrates.",
+   "severity": "medium",
+   "category": "Structural",
+   "trig_any": [
+    "weld",
+    "MIG",
+    "spot weld",
+    "STRSW"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "test weld",
+    "coupon",
+    "destructive test"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "squeeze_weld_setup",
+   "title": "STRSW/squeeze-type resistance welding setup (if used)",
+   "why": "Electrode setup/fit and validation may be required; not always included.",
+   "severity": "low",
+   "category": "Structural",
+   "trig_any": [
+    "spot weld",
+    "STRSW",
+    "resistance weld"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "STRSW setup",
+    "electrode",
+    "spot welder setup"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "rivet_bond_setup",
+   "title": "Rivet/bond setup + consumables (if used)",
+   "why": "Rivet/bond operations involve specific prep, tooling and consumables beyond base times.",
+   "severity": "high",
+   "category": "Structural",
+   "trig_any": [
+    "rivet",
+    "bond",
+    "adhesive",
+    "SPR",
+    "flow drill"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "rivet bond",
+    "SPR",
+    "bonding adhesive"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "weld_through_primer",
+   "title": "Weld-through primer application (if welding performed)",
+   "why": "Weld-through primer is required on bare metal mating surfaces before welding per OEM/I-CAR.",
+   "severity": "high",
+   "category": "Corrosion",
+   "trig_any": [
+    "weld",
+    "MIG",
+    "spot weld",
+    "STRSW",
+    "section"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "weld-through",
+    "weld through primer",
+    "WTP"
+   ],
+   "feature_requires": []
+  },
+  {
+   "key": "corrosion_protection",
+   "title": "Corrosion protection / cavity wax / seam sealer (as required)",
+   "why": "Corrosion protection restores factory protection on repaired/replaced panels.",
+   "severity": "high",
+   "category": "Corrosion",
+   "trig_any": [
+    "replace",
+    "section",
+    "weld",
+    "panel",
+    "quarter",
+    "rocker",
+    "rail"
+   ],
+   "trig_all": [],
+   "already_terms": [
+    "corrosion protection",
+    "cavity wax",
+    "seam sealer",
+    "e-coat",
+    "anti-corrosion"
+   ],
+   "feature_requires": []
+  }
+ ]
+}

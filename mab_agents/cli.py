@@ -1,7 +1,7 @@
 """`mab` command line.
 
 Offline commands (no API key): init, agents, ros, ro, stage, audit, adas, board, msg, brief, kpi,
-lookup, queue, script, price, kb, serve (the web app; only "Ask" needs a key).
+lookup, queue, script, price, kb, import-ems, sync-crisma, serve (the web app; only "Ask" needs a key).
 Model commands (need ANTHROPIC_API_KEY): ask, chat. `mcp` serves the tools to Claude Desktop.
 """
 from __future__ import annotations
@@ -231,6 +231,8 @@ def cmd_kb(args) -> int:
         for d in kb.documents():
             print(f"{d['path']:<50} {d['pages']:>4} pages {d['chunks']:>5} passages  synced {d['synced_at'][:16]}")
         return 0
+    if args.kb_cmd == "fetch":
+        return cmd_kb_fetch(args)
     if args.kb_cmd == "search":
         hits = kb.search(args.query, args.k)
         if not hits:
@@ -240,6 +242,77 @@ def cmd_kb(args) -> int:
             print(f"--- {h.title} ({h.path}, page {h.page}) score {h.score}\n    …{h.snippet}…\n{h.text[:600]}\n")
         return 0
     return 2
+
+
+def cmd_import_ems(args) -> int:
+    from . import ems
+
+    ctx = _ctx(args)
+    folder = args.path or ctx.shop.get("ems", {}).get("export_dir")
+    if not folder:
+        print("Give a path or set [ems] export_dir in shop.toml", file=sys.stderr)
+        return 2
+
+    def show(r: dict) -> None:
+        if "error" in r:
+            print(f"  ! {r['file']}: {r['error']}")
+        else:
+            print(f"  {'new' if r['created'] else 'upd'} RO {r['ro']}  est {r['estimate_id']} supp {r['supp_no']}  {r['lines']} lines  gross ${(r['gross'] or 0):,.2f}")
+
+    if args.watch:
+        print(f"Watching {folder} for new EMS jobs every {args.poll}s. Ctrl-C to stop.")
+        try:
+            ems.watch(folder, ctx.store, ctx.shop, poll_seconds=args.poll, on_result=show)
+        except KeyboardInterrupt:
+            pass
+        return 0
+    results = ems.import_path(folder, ctx.store, ctx.shop, today=ctx.today)
+    for r in results:
+        show(r)
+    print(f"{sum(1 for r in results if 'error' not in r)} imported, {sum(1 for r in results if 'error' in r)} failed")
+    return 0
+
+
+def cmd_sync_crisma(args) -> int:
+    import time as _time
+
+    from . import crisma
+
+    ctx = _ctx(args)
+    while True:
+        try:
+            s = crisma.sync(ctx.store, ctx.shop, args.dir, today=ctx.today)
+        except FileNotFoundError as e:
+            print(f"error: {e}", file=sys.stderr)
+            return 2
+        print(f"CRISMA: {s['rows']} rows -> {s['created']} new, {s['updated']} updated, {s['unchanged']} unchanged, {s['skipped']} skipped" + (f"; unknown LOCCD codes: {', '.join(s['unknown_codes'])} (add them to [crisma.status_map])" if s["unknown_codes"] else ""))
+        for e in s["errors"][:10]:
+            print(f"  ! {e}")
+        if not args.watch:
+            return 0
+        _time.sleep(args.poll)
+
+
+def cmd_kb_fetch(args) -> int:
+    from . import fetch
+
+    ctx = _ctx(args)
+    kdir = config.knowledge_dir(ctx.shop)
+    sources = Path(args.sources) if args.sources else kdir / "sources.toml"
+    if not sources.exists():
+        print(f"No sources file at {sources}. `mab init` creates a starter one.", file=sys.stderr)
+        return 2
+    results = fetch.fetch_all(sources, kdir, only_missing=not args.refresh)
+    for r in results:
+        if r.get("skipped"):
+            print(f"  = {r['name']} ({r['skipped']})")
+        elif r["ok"]:
+            print(f"  + {r['name']} -> {r['saved']} ({r['bytes']} bytes)")
+        else:
+            print(f"  ! {r['name']}: {r['error']}")
+    ok = sum(1 for r in results if r["ok"])
+    print(f"{ok}/{len(results)} fetched. Now run: mab kb sync")
+    return 0 if ok else 1
 
 
 def cmd_serve(args) -> int:
@@ -335,7 +408,10 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("script", help="phone script for a situation"); s.add_argument("situation"); s.set_defaults(fn=cmd_script)
     s = sub.add_parser("price", help="price a part through the shop matrix"); s.add_argument("list_price", type=float); s.add_argument("--type", default="oem"); s.add_argument("--cost", type=float); s.add_argument("--max-markup", type=float, dest="max_markup"); s.set_defaults(fn=cmd_price)
     s = sub.add_parser("kb", help="knowledge base: sync | search | list"); kb = s.add_subparsers(dest="kb_cmd", required=True)
-    kb.add_parser("sync"); kb.add_parser("list"); ks = kb.add_parser("search"); ks.add_argument("query"); ks.add_argument("-k", type=int, default=5); s.set_defaults(fn=cmd_kb)
+    kb.add_parser("sync"); kb.add_parser("list"); ks = kb.add_parser("search"); ks.add_argument("query"); ks.add_argument("-k", type=int, default=5)
+    kf = kb.add_parser("fetch", help="download knowledge/sources.toml URLs"); kf.add_argument("--sources"); kf.add_argument("--refresh", action="store_true"); s.set_defaults(fn=cmd_kb)
+    s = sub.add_parser("import-ems", help="import CCC ONE EMS jobs (DBF sets or .EST) from a folder or file"); s.add_argument("path", nargs="?"); s.add_argument("--watch", action="store_true"); s.add_argument("--poll", type=float, default=30); s.set_defaults(fn=cmd_import_ems)
+    s = sub.add_parser("sync-crisma", help="read RO status from CRISMA's BSRO/BSLOC tables (read-only)"); s.add_argument("--dir", help="CRISMA data folder (default from shop.toml)"); s.add_argument("--watch", action="store_true"); s.add_argument("--poll", type=float, default=60); s.set_defaults(fn=cmd_sync_crisma)
     s = sub.add_parser("serve", help="run the front-desk web app"); s.add_argument("--host", default="127.0.0.1"); s.add_argument("--port", type=int, default=8765); s.set_defaults(fn=cmd_serve)
     sub.add_parser("mcp", help="serve the shop tools to Claude Desktop over MCP (stdio)").set_defaults(fn=cmd_mcp)
     s = sub.add_parser("ask", help="ask the fleet (routes to an agent)"); s.add_argument("question"); s.add_argument("--agent", choices=[m.__name__.split(".")[-1] for m in fleet_mod.MODULES]); s.add_argument("-v", "--verbose", action="store_true"); s.set_defaults(fn=cmd_ask)

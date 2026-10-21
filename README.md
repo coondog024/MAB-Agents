@@ -72,6 +72,21 @@ mab agents                                                          # list the f
 Edit `shop.toml` first: name, phone, hours, posted rates, DRP partners and the
 per-carrier rules. The agents quote those verbatim and nothing else.
 
+## Connecting CRISMA and CCC ONE
+
+The shop runs CRISMA (FoxPro) and writes estimates in CCC ONE with EMS export.
+MAB reads both, read-only:
+
+```bash
+mab sync-crisma --watch       # BSRO/BSLOC -> stage, dates, rental, status tag (LOCCD map in shop.toml)
+mab import-ems --watch        # EMSOUT folder -> estimate lines, totals, deductible, rates, supplements
+```
+
+See [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md) for the field mapping, how the
+two systems are linked (put the CRISMA RO number in CCC's RO field), and what
+each source is allowed to change. The estimate audit also runs the shop's own
+51-rule not-included catalogue, kept as editable JSON.
+
 ## Knowledge base: your PDFs and SOPs
 
 The old `AI-Agents` repo had a demo that vectorised recipe PDFs. This is the
@@ -86,8 +101,10 @@ mab kb sync
 mab kb search "blend not included"
 ```
 
-`mab init` seeds `knowledge/` with a front-desk playbook and a collision glossary;
-edit them, they are shop policy as far as the agents are concerned. Supported:
+`mab init` seeds `knowledge/` with a front-desk playbook, a collision glossary and
+`sources.toml`, a list of URLs (OEM position-statement hubs, the DEG, Maryland
+statutes) that `mab kb fetch` downloads into the folder; edit them, they are shop
+policy as far as the agents are concerned. Supported:
 PDF, .md, .txt, .csv. Only load documents the shop is licensed to use. The index
 stays on the machine; only matching passages go into a prompt. (If you later
 want semantic search, the `KnowledgeBase.search` method is the one place to add
@@ -112,7 +129,9 @@ These need no model and are what the tests and CI exercise:
 | `mab lookup <phone|name|RO>` | Find a customer |
 | `mab script <situation>` | Phone script (new_claim, deductible, delay_complaint, …) |
 | `mab price <list> [--type --cost --max-markup]` | Price a part through the matrix |
-| `mab kb sync|search|list` | Knowledge base |
+| `mab kb sync|search|list|fetch` | Knowledge base (fetch downloads `knowledge/sources.toml`) |
+| `mab import-ems [path] [--watch]` | CCC ONE EMS jobs -> repair orders |
+| `mab sync-crisma [--dir] [--watch]` | CRISMA status -> repair orders (read-only) |
 | `mab ros` / `mab ro <ro>` | List or show repair orders |
 | `mab stage <ro> <stage>` | Move an RO and print the customer text draft |
 | `mab audit <file.csv>` or `--ro <ro>` | Estimate audit with findings and totals |
@@ -129,8 +148,10 @@ These need no model and are what the tests and CI exercise:
 mab_agents/
   shop.example.toml   shop profile: rates, hours, DRPs, carrier rules, parts matrix, targets
   models.py           RepairOrder / EstimateLine / Part / stages
-  store.py            SQLite store (swap for CCC ONE / Mitchell / Rome later)
-  kb.py               knowledge base: PDF/markdown -> chunks -> SQLite FTS5
+  store.py            SQLite store
+  ems.py              CCC ONE EMS importer (DBF sets and .EST XML)
+  crisma.py           read-only CRISMA bridge (BSRO/BSLOC -> stages)
+  kb.py, fetch.py     knowledge base: PDF/markdown -> chunks -> SQLite FTS5; URL fetcher
   llm.py              Anthropic SDK tool runner: model, effort, caching, fallbacks, web search
   tools/              pure functions: estimate audit, ADAS triggers, parts pricing/quotes,
                       scheduling, customer templates, front-desk scripts, carrier rules, KPIs
@@ -162,8 +183,8 @@ transcripts are append-only so `mab chat` keeps history intact.
 
 | Replace | With |
 |---|---|
-| `store.py` sample ROs | Export/API from your management system; keep the `RepairOrder` shape |
-| `data/sample_estimate.csv` | CCC / Mitchell / Audatex line export (map the columns in `estimate_tools.CSV_COLUMNS`) |
+| sample ROs | `mab sync-crisma` + `mab import-ems` (done; see docs/DATA_SOURCES.md) |
+| `data/sample_estimate.csv` | Mitchell/Audatex PDFs via a parser that emits `EstimateLine` rows |
 | Message log | Twilio or your shop's texting platform, behind the "Mark sent" button |
 | `knowledge/` starter docs | Your real SOPs, DRP agreements, P-pages, OEM procedures |
 | `carrier_rules` in `shop.toml` | Your actual DRP agreements |

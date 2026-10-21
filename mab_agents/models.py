@@ -135,6 +135,17 @@ class RepairOrder:
     # Items the customer pays beyond the deductible: betterment, carrier-denied operations,
     # upgrades, prior damage they asked us to fix. [{description, amount, reason}]
     customer_pay_items: list[dict] = field(default_factory=list)
+    # Where this RO's data came from. CRISMA sync fills source_status with the LOCCD code and
+    # name; the EMS importer fills estimate_id / supp_no / estimate_totals / labor_rates.
+    source_status: str = ""          # e.g. "IB - IN BODY REPAIR"
+    scheduled_in: str | None = None  # CRISMA SCHINDT (drop-off appointment) as ISO date
+    flags: list[str] = field(default_factory=list)   # e.g. ["total_loss", "has_supplement"]
+    estimate_id: str = ""            # CCC UNQFILE_ID
+    supp_no: str = ""                # "00" base estimate, "01".. supplements
+    estimate_system: str = ""        # "CCC", "Mitchell", "Audatex"
+    estimate_totals: dict = field(default_factory=dict)
+    labor_rates: dict = field(default_factory=dict)  # rates the estimate was written at
+    plate: str = ""
 
     # ---- derived helpers -------------------------------------------------
     def labor_hours(self) -> float:
