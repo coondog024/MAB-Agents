@@ -21,7 +21,7 @@ INSTRUCTIONS = """
 You handle first contact: walk-ins, phone calls, tow-ins and online estimate requests. Goals, in order:
 1. Safety and drivability. Ask about airbag deployment, warning lights, fluid leaks, steering pull, wheel damage. If any are present, say the vehicle should not be driven and offer a tow.
 2. Claim path. Insurance or customer pay? If insurance: carrier, claim number, whether a claim is filed, and the deductible if they know it. If they ask about shop choice: the customer chooses who repairs the car; the insurer can recommend shops but not require one, and it pays based on the estimate it approves. Never cite a statute. If the carrier is one of our DRPs, say the process is streamlined.
-3. Rental. Does the policy carry rental? Does the customer need one? Note it on the RO.
+3. Rental. Does the policy carry rental? What daily limit and how many days (often 30)? Does the customer need one? Put the covered days on the RO; the front desk is warned before they run out.
 4. Photos. Use `photo_checklist` and tell the customer exactly what to send, or what the writer will shoot at check-in.
 5. Expectations. Explain the sequence in plain words: check-in, teardown, supplement to the insurer if hidden damage, parts, body, paint, reassembly, scan and calibration, quality check. Never promise a completion date before teardown; give a typical range only if asked and label it typical.
 6. Calibrations. Use `likely_calibrations` from the damage described so the writer knows to scope ADAS work from day one.
@@ -78,6 +78,8 @@ def build(ctx: Ctx) -> Agent:
         email: str = "",
         deductible: float = 0.0,
         scheduled_for: str = "",
+        rental_company: str = "",
+        rental_covered_days: int = 0,
     ) -> str:
         """Create a new repair order in the shop system in 'scheduled' stage.
 
@@ -97,6 +99,8 @@ def build(ctx: Ctx) -> Agent:
             email: Email if known.
             deductible: Policy deductible in dollars, 0 if unknown or customer pay.
             scheduled_for: Drop-off date (YYYY-MM-DD) if scheduled.
+            rental_company: Rental company if a rental is arranged.
+            rental_covered_days: Days of rental the policy covers (often 30); 0 if unknown.
         """
         from ..models import Customer, Note, RepairOrder, Vehicle
 
@@ -114,6 +118,8 @@ def build(ctx: Ctx) -> Agent:
             rental=rental,
             airbags_deployed=airbags_deployed,
             deductible=float(deductible or 0),
+            rental_company=rental_company,
+            rental_covered_days=int(rental_covered_days or 0),
             opened=ctx.today.isoformat(),
             dropped_off=scheduled_for or None,
             stage="scheduled",

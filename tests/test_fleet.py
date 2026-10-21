@@ -20,7 +20,7 @@ class FleetTests(unittest.TestCase):
         self.fleet = fleet.build_fleet(ctx())
 
     def test_eight_agents_with_tools(self):
-        self.assertEqual(len(self.fleet), 9)
+        self.assertEqual(len(self.fleet), 10)
         for a in self.fleet.values():
             self.assertTrue(a.tools, a.key)
             self.assertIn("Mullikin", a.system_prompt)

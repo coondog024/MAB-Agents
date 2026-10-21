@@ -14,6 +14,7 @@ vendor price lists. Only documents the shop is licensed to use.
 from __future__ import annotations
 
 import hashlib
+import logging
 import re
 import sqlite3
 import threading
@@ -61,6 +62,8 @@ def extract_pages(path: Path) -> list[str]:
     suffix = path.suffix.lower()
     if suffix in PDF_SUFFIXES:
         from pypdf import PdfReader
+
+        logging.getLogger("pypdf").setLevel(logging.ERROR)   # font warnings are noise for search
 
         reader = PdfReader(str(path))
         return [(page.extract_text() or "") for page in reader.pages]

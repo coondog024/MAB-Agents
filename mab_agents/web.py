@@ -76,6 +76,10 @@ class Api:
             d["summary"] = frontdesk_tools.ro_summary(ro, ctx.today)
             d["payment"] = frontdesk_tools.payment_summary(ro, ctx.shop)
             d["parts_status"] = parts_tools.parts_status(ro, today=ctx.today)
+            from .tools import ar_tools
+
+            d["balance"] = ar_tools.balance(ro, ctx.rates())
+            d["rental_days_used"] = ro.rental_days_used(ctx.today)
             return d
         if path == "/api/stages":
             return [{"key": s, "label": STAGE_LABELS[s]} for s in STAGES]
@@ -133,6 +137,17 @@ class Api:
                 raise ValueError("Note is empty")
             ctx.store.add_note(body["ro"], text[:2000], author="front-desk")
             return {"ok": True}
+        if path == "/api/payment":
+            from .tools import ar_tools
+
+            amount = float(body["amount"])
+            if amount <= 0:
+                raise ValueError("Amount must be positive")
+            day = str(body.get("date") or ctx.today.isoformat())
+            payer = str(body.get("payer") or "customer")[:60]
+            ro = ctx.store.mutate(body["ro"], lambda r: r.payments.append({"date": day, "payer": payer, "amount": round(amount, 2), "method": str(body.get("method") or "card")[:20], "reference": str(body.get("reference") or "")[:40]}))
+            ctx.store.add_note(ro.ro_number, f"Payment ${amount:,.2f} from {payer} ({body.get('method', 'card')})", author="front-desk")
+            return ar_tools.balance(ro, ctx.rates())
         if path == "/api/promised":
             ro = ctx.store.set_promised(body["ro"], str(body["date"]), str(body.get("reason", "updated by front desk")))
             return {"ro": ro.ro_number, "promised": ro.promised}
@@ -144,6 +159,7 @@ class Api:
                 "drivable": bool(body.get("drivable", True)), "rental": bool(body.get("rental", False)), "airbags_deployed": bool(body.get("airbags_deployed", False)),
                 "vin": body.get("vin", ""), "email": body.get("email", ""),
                 "deductible": float(body.get("deductible") or 0), "scheduled_for": str(body.get("scheduled_for") or ""),
+                "rental_company": str(body.get("rental_company") or ""), "rental_covered_days": int(body.get("rental_covered_days") or 0),
             }))
             photos = json.loads(tools["photo_checklist"].call({"damage_area": body.get("loss_description", "general")}))
             return {**created, "photos": photos["photos"], "checkin": frontdesk_tools.CHECKIN_CHECKLIST}

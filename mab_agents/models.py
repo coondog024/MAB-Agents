@@ -146,6 +146,15 @@ class RepairOrder:
     estimate_totals: dict = field(default_factory=dict)
     labor_rates: dict = field(default_factory=dict)  # rates the estimate was written at
     plate: str = ""
+    # Rental clock: coverage is usually a daily cap and a day cap (often 30). Days count from
+    # rental_start, else drop-off.
+    rental_company: str = ""
+    rental_covered_days: int = 0
+    rental_start: str | None = None
+    # Supplement log: [{supp_no, submitted, approved, gross, amount}] (EMS import appends)
+    supplements: list[dict] = field(default_factory=list)
+    # Payments received: [{date, payer, amount, method, reference}]
+    payments: list[dict] = field(default_factory=list)
 
     # ---- derived helpers -------------------------------------------------
     def labor_hours(self) -> float:
@@ -159,6 +168,18 @@ class RepairOrder:
 
     def customer_pay_total(self) -> float:
         return round(sum(float(i.get("amount", 0)) for i in self.customer_pay_items), 2)
+
+    def paid_total(self) -> float:
+        return round(sum(float(p.get("amount", 0)) for p in self.payments), 2)
+
+    def rental_days_used(self, today: date | None = None) -> int | None:
+        if not self.rental:
+            return None
+        start = self.rental_start or self.dropped_off
+        if not start:
+            return None
+        end = date.fromisoformat(self.delivered) if self.delivered else (today or date.today())
+        return max((end - date.fromisoformat(start)).days, 0)
 
     def days_in_shop(self, today: date | None = None) -> int:
         if not self.dropped_off:

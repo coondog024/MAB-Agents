@@ -31,7 +31,18 @@ def kpis(ros: list[RepairOrder], shop: dict[str, Any], today: date | None = None
     def avg(xs: list[float]) -> float | None:
         return round(sum(xs) / len(xs), 2) if xs else None
 
+    def has(ro: RepairOrder, *needles: str) -> bool:
+        return any(any(n in f"{l.operation} {l.description}".lower() for n in needles) for l in ro.lines)
+
+    with_lines = [r for r in ros if r.lines]
+    rental_days = [d for d in (r.rental_days_used(today) for r in ros) if d is not None]
+
     return {
+        # The four things carriers grade DRP shops on, plus what CCC reports industry-wide.
+        "scan_rate": round(sum(1 for r in with_lines if has(r, "scan")) / len(with_lines), 2) if with_lines else None,
+        "calibration_rate": round(sum(1 for r in with_lines if has(r, "calibrat", "aim")) / len(with_lines), 2) if with_lines else None,
+        "supplement_rate": round(sum(1 for r in ros if r.supplements or "has_supplement" in r.flags or (r.supp_no and r.supp_no not in {"00", "0"})) / len(ros), 2) if ros else None,
+        "average_rental_days": avg(rental_days),
         "as_of": today.isoformat(),
         "open_ros": len(open_ros),
         "delivered_in_data": len(delivered),

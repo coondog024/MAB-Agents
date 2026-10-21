@@ -63,6 +63,7 @@ h2{font-size:1.05rem;margin:0 0 10px}h3{font-size:.95rem;margin:12px 0 6px}ul{ma
 <input name="vin" placeholder="VIN (optional)"><input name="insurer" placeholder="Insurance company (blank = customer pay)">
 <input name="claim_number" placeholder="Claim number"><input name="deductible" placeholder="Deductible $ (0 if unknown)" type="number" step="1" min="0">
 <label>Drop-off date <input name="scheduled_for" type="date"></label>
+<input name="rental_company" placeholder="Rental company (if any)"><input name="rental_covered_days" placeholder="Rental days covered (often 30)" type="number" min="0">
 <textarea name="loss_description" placeholder="What happened and where the damage is" required></textarea>
 <label><input type="checkbox" name="drivable" checked> Drivable (no warning lights, leaks, wheel damage)</label>
 <label><input type="checkbox" name="rental"> Needs a rental</label>
@@ -145,6 +146,7 @@ document.addEventListener('click',async e=>{
     else if(act==='msg'){ const dd=await msgFor(b.dataset.ro,b.dataset.kind); if(dd){ $('#msgbox').innerHTML=draftBox(dd,b.dataset.ro); if(b.dataset.kind==='delay') openRO(b.dataset.ro,dd);} }
     else if(act==='move') moveStage(b.dataset.ro);
     else if(act==='note') addNote(b.dataset.ro);
+    else if(act==='pay'){ const amt=parseFloat($('#payamt').value); if(!(amt>0)){toast('Enter the payment amount',true);return} await api('/api/payment',{ro:b.dataset.ro,amount:amt,payer:$('#paypayer').value,method:$('#paymethod').value,reference:$('#payref').value}); toast('Payment recorded'); openRO(b.dataset.ro); }
     else if(act==='script') script(b.dataset.key);
     else if(act==='price') pricePart();
     else if(act==='compare') compareQuotes();
@@ -192,6 +194,9 @@ async function openRO(ro,keepDraft){
   <div class="row"><span class="tag">${esc(s.stage_label)}</span>${s.crisma_status?`<span class="tag" title="CRISMA location">${esc(s.crisma_status)}</span>`:''}<span class="tag">${esc(s.insurer)}</span>${s.claim_number?`<span class="tag">claim ${esc(s.claim_number)}</span>`:''}${s.rental?'<span class="tag">rental</span>':''}${(s.flags||[]).map(f=>`<span class="tag" style="border-color:var(--warn)">${esc(f.replace(/_/g,' '))}</span>`).join('')}<span class="muted">day ${s.days_in_shop} in shop · target ${esc(s.promised||'not set yet')}</span></div>
   ${d.estimate_id?`<p class="muted">Estimate ${esc(d.estimate_system)} ${esc(d.estimate_id)} supp ${esc(d.supp_no)} · gross ${money(d.estimate_totals.gross)} · deductible ${money(d.estimate_totals.deductible)}${Object.keys(d.labor_rates||{}).length?' · written at '+Object.entries(d.labor_rates).map(([k,v])=>k+' $'+v).join(', '):''}</p>`:''}
   <p><b>If they ask what they owe, say:</b> ${esc(p.say)}<br><span class="muted">${esc(p.who_pays)}</span></p>
+  ${s.rental?`<p><b>Rental:</b> day ${d.rental_days_used??'?'}${d.rental_covered_days?` of ${d.rental_covered_days} covered`:' (covered days not on file)'}${d.rental_company?` · ${esc(d.rental_company)}`:''}</p>`:''}
+  ${(d.balance&&(d.balance.paid>0||s.stage==='ready'||s.stage==='delivered'))?`<p><b>Money:</b> invoice ${money(d.balance.invoice_total)} · paid ${money(d.balance.paid)} · balance ${money(d.balance.balance)}${d.balance.carrier_short>0.5?` · <span style="color:var(--bad)">carrier short ${money(d.balance.carrier_short)}</span>`:''}</p>`:''}
+  <div class="row"><input id="payamt" placeholder="Payment $" type="number" step="0.01" min="0" style="width:110px"><select id="paypayer"><option value="customer">customer</option>${s.insurer&&s.insurer!=='Customer pay'?`<option value="${esc(s.insurer)}">${esc(s.insurer)}</option>`:''}</select><select id="paymethod"><option>card</option><option>cash</option><option>check</option><option>eft</option></select><input id="payref" placeholder="check / ref #" size="12"><button class="ghost" data-act="pay" data-ro="${esc(ro)}">Record payment</button></div>
   ${ps.total_parts?`<p><b>Parts:</b> ${ps.outstanding.length} still to arrive${ps.late.length?`, <span style="color:var(--bad)">${ps.late.length} past their ETA</span>`:''}${ps.latest_eta?`, latest ETA ${esc(ps.latest_eta)}`:''}</p>`:''}
   <h3>Send an update</h3><div class="row"><button class="ghost" data-act="msg" data-ro="${esc(ro)}" data-kind="stage">Status text</button><button class="ghost" data-act="msg" data-ro="${esc(ro)}" data-kind="delay">Delay (new date)</button><button class="ghost" data-act="msg" data-ro="${esc(ro)}" data-kind="supplement">Hidden damage found</button><button class="ghost" data-act="msg" data-ro="${esc(ro)}" data-kind="review">Review request</button></div><div id="msgbox"></div>
   <h3>Move to the next stage</h3><div class="row"><select id="newstage">${stages.map(x=>`<option value="${esc(x.key)}" ${x.key===s.stage?'selected':''}>${esc(x.label)}</option>`).join('')}</select><button class="ghost" data-act="move" data-ro="${esc(ro)}">Move and draft the text</button></div>

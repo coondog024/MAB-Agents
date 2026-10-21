@@ -31,7 +31,7 @@ def build(ctx: Ctx) -> Agent:
             model_year: Vehicle model year, 0 if unknown.
         """
         lines = estimate_tools.parse_estimate(estimate)
-        findings = estimate_tools.audit_estimate(lines, airbags_deployed=airbags_deployed, adas_equipped=adas_equipped, model_year=model_year or None)
+        findings = estimate_tools.audit_estimate(lines, airbags_deployed=airbags_deployed, adas_equipped=adas_equipped, model_year=model_year or None, state=ctx.shop["shop"].get("state"))
         return j({"lines_parsed": len(lines), **estimate_tools.audit_report(findings, estimate_tools.evaluate_rules(lines))})
 
     @beta_tool
@@ -42,7 +42,7 @@ def build(ctx: Ctx) -> Agent:
             ro_number: The RO number, e.g. 26-1042.
         """
         ro = ctx.store.require(ro_number)
-        findings = estimate_tools.audit_estimate(ro.lines, airbags_deployed=ro.airbags_deployed, adas_equipped=ro.adas_equipped, model_year=ro.vehicle.year)
+        findings = estimate_tools.audit_estimate(ro.lines, airbags_deployed=ro.airbags_deployed, adas_equipped=ro.adas_equipped, model_year=ro.vehicle.year, state=ctx.shop["shop"].get("state"))
         from ..ems import rate_notes
 
         return j({"ro": ro.ro_number, "vehicle": ro.vehicle.label(), "insurer": ro.insurer, "estimate": {"id": ro.estimate_id, "supp_no": ro.supp_no, "system": ro.estimate_system, "totals": ro.estimate_totals, "written_at_rates": ro.labor_rates, "rate_warnings": rate_notes(ro, ctx.rates())},

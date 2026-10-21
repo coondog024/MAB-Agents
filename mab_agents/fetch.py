@@ -22,7 +22,9 @@ from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
 
-USER_AGENT = "mab-agents/0.1 (+https://github.com/coondog024/MAB-Agents)"
+# Browser-shaped but still self-identifying: DEG and a few OEM hosts sit behind firewalls that
+# refuse bare script user agents while serving the same public pages to a browser.
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) mab-agents/0.1 (+https://github.com/coondog024/MAB-Agents)"
 
 
 class _Text(HTMLParser):

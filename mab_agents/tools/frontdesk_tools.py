@@ -16,20 +16,22 @@ SCRIPTS: dict[str, dict[str, Any]] = {
     "new_claim": {
         "title": "New claim / first call",
         "ask": [
+            "Is everyone OK? Is the car drivable, and where is it right now? (the person and the car first; insurance questions come after)",
             "Name and best mobile number for texts",
             "Year, make, model (and colour)",
             "What happened and where the damage is",
-            "Is it drivable? Any warning lights, leaks, wheel damage, airbags? (airbags or leaks = no, offer a tow)",
-            "Insurance company and claim number, or customer pay",
-            "Does the policy include rental? Do they need one?",
+            "Any warning lights, leaks, wheel damage, airbags? (airbags or leaks = do not drive it, offer a tow)",
+            "Are they thinking of a claim or paying out of pocket? If a claim: insurance company and claim number if they have one. A claim number is not required to schedule.",
+            "Does the policy include rental? How many days and what daily limit? Do they need one?",
             "When can they bring it in",
         ],
         "say": [
-            "You have the right to choose your repair shop. If you tell the insurance company you're taking it to Mullikin's, we handle the rest with them.",
-            "Once we take it apart and the insurer approves the repair plan, we'll give you a target date and text you at every step.",
+            "You choose who repairs your car. If you tell the insurance company you're bringing it to Mullikin's, we handle the paperwork with them.",
+            "The insurance company's first estimate is a starting point; most jobs find more once the car is apart. We document it with photos and send it to them the same day.",
+            "Once we take it apart and the insurer approves the repair plan, we'll give you a target date and text you every 2 to 3 days.",
         ],
-        "never": ["Promise a completion date before teardown", "Quote a repair price over the phone"],
-        "then": "Create the RO (Check-in tab) and send the photo checklist if they want a rough idea before drop-off.",
+        "never": ["Open with 'Have you filed a claim yet?'", "Promise a completion date before teardown", "Quote a repair price over the phone"],
+        "then": "Create the RO (Check-in tab) with the rental days, and send the photo checklist if they want a rough idea before drop-off. For a self-pay customer, offer a written cash estimate within 24 hours.",
     },
     "status_call": {
         "title": "Customer wants a status",
@@ -102,8 +104,50 @@ SCRIPTS: dict[str, dict[str, Any]] = {
             "They pay based on the estimate they approve. If what they approve is less than our invoice, we tell you before work starts, not at pickup.",
             "We work with <carrier> regularly and handle the paperwork with them.",
         ],
-        "never": ["Argue with the customer about their insurer", "Quote a statute or say 'the law says'", "Promise the insurer will pay our full invoice"],
-        "then": "Move to scheduling. If they push back, offer the manager.",
+        "never": ["Argue with the customer about their insurer", "Promise the insurer will pay our full invoice"],
+        "then": "Move to scheduling. If they push back, offer the manager. Write the adjuster's name, the date and the exact words on the RO; Maryland Insurance Article 10-503 requires insurers to tell customers they may choose their shop, and the MIA consumer line is 800-492-6116 (details in the knowledge base).",
+    },
+    "diminished_value": {
+        "title": "Customer asks whether the car is worth less now (diminished value)",
+        "ask": ["Was the other driver at fault, and which carrier is paying?", "Is the repair finished and the final invoice in hand?"],
+        "say": [
+            "A repaired car can be worth less than it was before the accident. That loss is called diminished value, and in Maryland it's a real claim.",
+            "If the other driver was at fault, you claim it from their insurance company after the repair is done. If it was a hit-and-run or an uninsured driver, your own uninsured-motorist property damage coverage has to consider it too.",
+            "Insurers don't bring it up; you ask in writing. You'll need a before-and-after valuation from a dealer or an independent appraiser, and the proof is on you. We'll give you the final invoice, the photos and the scan and calibration reports for the file.",
+        ],
+        "never": ["Quote an amount or promise the insurer will pay", "Say the shop appraises diminished value or files the claim", "Promise it applies under the customer's own collision coverage (the policy may exclude it)"],
+        "then": "Note on the RO that DV was discussed. Point them to the MIA consumer line 800-492-6116 if the carrier refuses to consider it; MIA Bulletin 24-8 and the Maryland rules doc in the knowledge base have the details.",
+    },
+    "total_loss": {
+        "title": "The insurer says it may be a total loss",
+        "ask": ["Which carrier and adjuster; has the customer received a valuation or an offer yet?", "Is there a loan on the car? Are personal items still in it?"],
+        "say": [
+            "Only the insurance company decides a total loss. In Maryland the title threshold is repairs over 75% of the car's value, but they can total it below that.",
+            "Once they decide, they generally have 10 business days to make you a cash offer, and you can ask in writing for the valuation details; they have 7 business days to send them, and 5 to answer a counteroffer.",
+            "We'll send them the total-loss notice today and copy you. Please get your personal items out and send us the lender's payoff information if there's a loan.",
+        ],
+        "never": ["Say the car is or isn't a total loss", "Let storage accrue silently; the storage policy goes to the customer and the carrier in writing"],
+        "then": "Move the RO to total-loss handling with the Insurance agent: storage notice, personal items, lien payoff letter, written valuation request. Rental days keep burning while they wait, so push the adjuster.",
+    },
+    "betterment": {
+        "title": "Why is there a charge for tires or a battery?",
+        "ask": ["Which line and what did the adjuster prorate (tread depth, age)?"],
+        "say": [
+            "The insurance company only pays for the wear that was left on the old part. The new tire gives you more life than you had, so they charge the difference; that's called betterment.",
+            "We'll show you the exact dollar amount and the measurement behind it before we order the part, and it appears as its own line on your invoice, separate from the deductible.",
+        ],
+        "never": ["Order a part with betterment before the customer has agreed to the amount"],
+        "then": "Add the betterment as a customer-pay item on the RO so the balance at pickup is right.",
+    },
+    "claim_or_cash": {
+        "title": "Should I file a claim or pay for this myself?",
+        "ask": ["What is their deductible? Roughly what size is the damage? Have they had a claim recently?"],
+        "say": [
+            "If the repair is close to your deductible, paying yourself can make sense; we can write you a cash estimate within 24 hours, no claim number needed.",
+            "We can't predict what your insurer will do to your rate; that's a question for your agent. We can give you the number to compare against your deductible.",
+        ],
+        "never": ["Tell a customer whether their premium will go up"],
+        "then": "Book an estimate slot and note 'cash estimate requested' on the RO.",
     },
     "customer_pay_estimate": {
         "title": "Customer-pay estimate request",
@@ -116,7 +160,8 @@ SCRIPTS: dict[str, dict[str, Any]] = {
 
 CHECKIN_CHECKLIST = [
     "Photo ID and insurance card; confirm mobile number and text/call preference",
-    "Signed repair authorization and direction-to-pay",
+    "Signed repair authorization with the Maryland 'Customer's Rights' block above the signature (Com. Law 14-1008) and direction-to-pay; the daily storage rate and its start date are written in it",
+    "Tow-in or after-hours drop: give the rights notice by phone and write down who was told, the date and time, and sign the note (14-1008 allows oral notice only with that record)",
     "Walk-around with the customer: four corners, VIN, odometer, dash lights, interior, prior damage (point it out and note it)",
     "Personal items out; toll transponder, garage opener, child seats noted",
     "Fuel level and mileage on the RO",
@@ -127,7 +172,8 @@ CHECKIN_CHECKLIST = [
 
 DELIVERY_CHECKLIST = [
     "Washed, vacuumed, no dust in jambs, no tape, no overspray on glass or trim",
-    "Invoice matches approved estimate plus supplements; deductible and customer-pay items itemized",
+    "Invoice matches approved estimate plus supplements; deductible and customer-pay items itemized; used or reconditioned parts clearly marked (Com. Law 14-1003); customer signs and gets a copy",
+    "Offer the replaced parts back (Com. Law 14-1004, except warranty-return cores); note on the RO whether they took or declined them",
     "Walk the repaired area and panel gaps with the customer; show calibration report and post-repair scan if applicable",
     "Warranty wording handed over, explained in one sentence",
     "Payment collected; insurer checks payable to the customer endorsed",
@@ -138,14 +184,16 @@ DELIVERY_CHECKLIST = [
 DAILY_ROUTINE = {
     "opening": [
         "Open the Today screen (or `mab brief`)",
-        "Work the 'Needs an update' list: everyone silent for 2+ days gets a text today",
-        "Ready for pickup: confirm pickup times and what they owe",
-        "Awaiting approval older than 24h: call or portal-message the adjuster",
+        "Work the 'Needs an update' list: everyone silent for 2+ days gets a text today, and every text says when they'll hear from us next",
+        "Ready for pickup: confirm pickup times and what they owe (deductible, betterment, anything the insurer declined)",
+        "Awaiting approval: supplements older than 48 hours get a call to the adjuster; older than 72 hours go to the manager",
+        "Rental cars: anyone past day 15, or within 5 days of their covered days, gets the adjuster asked for an extension today",
         "Confirm today's drop-offs and rentals",
     ],
     "during": [
-        "Phone by the second ring, with your name",
-        "Every stage change from the floor becomes a customer text the same day",
+        "Phone by the third ring, with your name; open with the person and the car, not 'have you filed a claim?'",
+        "Missed call: text back within a few minutes",
+        "Every stage change from the floor becomes a customer text the same day; bad news (delay, hidden damage) goes by phone, then text",
         "Log every call and text on the RO",
     ],
     "closing": [
@@ -226,7 +274,9 @@ def payment_summary(ro: RepairOrder, shop: dict[str, Any], storage_days: int = 0
     else:
         customer_owes = round(total + storage + extras, 2)
         who = "Customer pay: the customer pays the full invoice at pickup."
-        say = f"Your estimated balance at pickup is ${customer_owes:,.2f}, based on the approved estimate; any changes get your OK first. We take card, cash or check."
+        say = f"Your estimated balance at pickup is ${customer_owes:,.2f}, based on the written estimate; any changes get your OK first. We take card, cash or check."
+        if shop.get("shop", {}).get("state", "").upper() == "MD":
+            who += " Maryland Commercial Law 14-1002: no more than 10% over the written estimate without the customer's consent."
     return {
         "ro": ro.ro_number,
         "repair_total_estimate": total,
@@ -279,6 +329,28 @@ def update_queue(ros: list[RepairOrder], last_messages: dict[str, dict], today: 
         if "backorder" in ro.flags:
             reasons.append("CRISMA shows a part on backorder: customer needs the new ETA")
             priority = min(priority, 2)
+        used = ro.rental_days_used(today)
+        if used is not None:
+            cap = int(ro.rental_covered_days or 0)
+            if cap and used >= cap:
+                reasons.append(f"Rental day {used} of {cap}: coverage has run out; the customer is paying unless an extension was granted")
+                priority = 1
+            elif cap and used >= cap - 5:
+                reasons.append(f"Rental day {used} of {cap}: ask {ro.insurer or 'the carrier'} for an extension before it runs out")
+                priority = min(priority, 1)
+            elif not cap and used >= 15:
+                reasons.append(f"Rental day {used} with no covered-days cap on file: confirm the cap with the adjuster (most policies stop at 30)")
+                priority = min(priority, 2)
+        if ro.stage == "approval" and ro.supplements:
+            last = ro.supplements[-1]
+            if not last.get("approved") and last.get("submitted"):
+                age = (today - date.fromisoformat(last["submitted"][:10])).days
+                if age >= 3:
+                    reasons.append(f"Supplement {last['supp_no']} submitted {age} days ago with no approval: escalate to the manager")
+                    priority = 1
+                elif age >= 2:
+                    reasons.append(f"Supplement {last['supp_no']} submitted {age} days ago: call the adjuster today")
+                    priority = min(priority, 2)
         if reasons:
             out.append({
                 "priority": priority,

@@ -33,10 +33,14 @@ it should stay on the shop's private network.)
 
 ## When the phone rings
 
+- **A new customer.** Start with the person and the car: "Is everyone OK? Is the
+  car drivable? Where is it now?" Insurance questions come after. Never open
+  with "Have you filed a claim yet?"
 - **Customer asking about their car.** Customer tab → type their phone number →
   open the RO. The page tells you the stage in plain words, what they owe at
-  pickup, and whether parts are late. The **Status text** button gives you a
-  message you can read aloud or send.
+  pickup, how many rental days they have used, and whether parts are late. The
+  **Status text** button gives you a message you can read aloud or send; every
+  text ends with when they will hear from us next.
 - **"What do I say when…"** Scripts tab. Every common call has an *Ask / Say /
   Never / Then* card: new claim, status call, angry about a delay, deductible,
   adjuster calling, tow arriving, rental, after-hours pickup, "my insurer says I
@@ -48,8 +52,9 @@ it should stay on the shop's private network.)
 ## New car coming in
 
 Check-in tab. Fill the form while they're on the phone (name, mobile, year,
-make, model, what happened, insurer and claim number, rental?). Click **Create
-RO**. You get the RO number and the photo list for when the car arrives. The
+make, model, what happened, insurer and claim number, deductible, rental company
+and how many rental days the policy covers). The covered days matter: the Today
+list warns you before a rental runs out. Click **Create RO**. You get the RO number and the photo list for when the car arrives. The
 check-in and delivery checklists are on the same page.
 
 ## Money
@@ -75,7 +80,8 @@ person or the manager.
 
 - The customer asks for the manager.
 - An adjuster says no to a scan, a calibration or a seat belt.
-- Anyone says the words "total loss", "lawyer", "insurance commissioner" or "BBB".
+- Anyone says the words "total loss", "lawyer", "insurance commissioner" or "BBB" (the Scripts tab has a total-loss card for the first conversation).
+- A supplement has sat with the adjuster for three days.
 - Anything about injury, a spill, or damage to a customer's car in our care.
 
 ## What the app will never do

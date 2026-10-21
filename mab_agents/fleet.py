@@ -4,10 +4,10 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from .agents import adas, customer, estimator, front_desk, insurance, intake, manager, parts, production
+from .agents import adas, ar, customer, estimator, front_desk, insurance, intake, manager, parts, production
 from .agents.base import Agent, Ctx, tool_name, with_knowledge
 
-MODULES = [front_desk, intake, estimator, adas, parts, production, customer, insurance, manager]
+MODULES = [front_desk, intake, estimator, adas, parts, production, customer, insurance, ar, manager]
 
 
 def build_fleet(ctx: Ctx) -> dict[str, Agent]:

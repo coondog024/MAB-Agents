@@ -73,6 +73,9 @@ def fit_sms(text: str, limit: int) -> str:
     return cut.rstrip(".,;:") + "…"
 
 
+NEXT_CONTACT = "You'll hear from us again within 2 business days."
+
+
 def stage_update(ro: RepairOrder, shop: dict[str, Any], stage: str | None = None) -> dict[str, Any]:
     stage = stage or ro.stage
     template = STAGE_TEMPLATES.get(stage)
@@ -80,6 +83,9 @@ def stage_update(ro: RepairOrder, shop: dict[str, Any], stage: str | None = None
         raise ValueError(f"No template for stage {stage}")
     text = template.format(**_ctx(ro, shop))
     limit = int(shop.get("sms", {}).get("max_chars", 300))
+    # Customers rank "when will I hear from you next" above speed: promise the next touch when it fits.
+    if stage not in {"scheduled", "ready", "delivered"} and len(text) + 1 + len(NEXT_CONTACT) <= limit:
+        text = f"{text} {NEXT_CONTACT}"
     return {
         "ro": ro.ro_number,
         "channel": ro.customer.preferred_contact,

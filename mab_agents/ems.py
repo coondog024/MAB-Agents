@@ -6,10 +6,11 @@ as a set of dBase files sharing the UNQFILE_ID stem (<id>.env .veh .ad1 .ad2 .li
 imports the same files; MAB reads them read-only and never changes them.
 
 Codes follow the EMS 2.x conventions CCC uses (also in est-database/ems_utils.py):
-  PART_TYPE  PAN new OEM, PAA aftermarket, PAL recycled/LKQ, PAM remanufactured,
-             PAR recore, PAC rechrome, PAE existing, PAG glass, PAS sublet, PAP partial
+  PART_TYPE  PAN new OEM, PAND new OEM discounted, PAA aftermarket, PAL recycled/LKQ,
+             PAM remanufactured, PAR recore, PAC reconditioned (Mitchell), PAE existing,
+             PAG glass, PAS sublet, PAP partial, PAO other
   MOD_LBR_TY LAB body, LAR refinish, LAM mechanical, LAS structural, LAF frame,
-             LAD diagnostic, LAE electrical, LAG glass, LA1-4 user defined
+             LAD diagnostic, LAE electrical, LAG glass, LAP paintless dent, LA1-4 user defined
   LBR_OP     OP1 refinish+replace, OP2 R&I, OP3 add labor, OP4 align, OP5 overhaul,
              OP6 refinish, OP7 inspect, OP8 check/adjust, OP9 repair, OP10 partial repair,
              OP11 replace, OP12 partial R&R, OP13 add cost, OP14 add operation,
@@ -30,8 +31,8 @@ from .store import Store
 
 DBF_SECTIONS = ("env", "ad1", "ad2", "veh", "lin", "ttl", "stl", "pfl", "pfp", "pfh", "pfm", "ven")
 
-PART_TYPE_MAP = {"PAN": "oem", "PAA": "aftermarket", "PAL": "recycled", "PAM": "reconditioned", "PAR": "reconditioned", "PAC": "reconditioned", "PAE": "none", "PAG": "oem", "PAS": "none", "PAP": "none", "PAO": "none", "": "none"}
-LABOR_TYPE_MAP = {"LAB": "body", "LAR": "refinish", "LAM": "mechanical", "LAS": "structural", "LAF": "structural", "LAD": "diagnostic", "LAE": "mechanical", "LAG": "glass", "LA1": "body", "LA2": "body", "LA3": "body", "LA4": "body", "": "body"}
+PART_TYPE_MAP = {"PAN": "oem", "PAND": "oem", "PAA": "aftermarket", "PAL": "recycled", "PAM": "reconditioned", "PAR": "reconditioned", "PAC": "reconditioned", "PAE": "none", "PAG": "oem", "PAS": "none", "PAP": "none", "PAO": "none", "": "none"}
+LABOR_TYPE_MAP = {"LAB": "body", "LAR": "refinish", "LAM": "mechanical", "LAS": "structural", "LAF": "structural", "LAD": "diagnostic", "LAE": "mechanical", "LAG": "glass", "LAP": "body", "LA1": "body", "LA2": "body", "LA3": "body", "LA4": "body", "": "body"}
 LABOR_OP_MAP = {"OP1": "replace", "OP2": "r&i", "OP3": "additional", "OP4": "additional", "OP5": "repair", "OP6": "refinish", "OP7": "additional", "OP8": "additional", "OP9": "repair", "OP10": "repair", "OP11": "replace", "OP12": "replace", "OP13": "additional", "OP14": "additional", "OP15": "blend", "OP16": "sublet", "OP0": "additional", "": "additional"}
 LABOR_OP_LABEL = {"OP1": "Refinish/Replace", "OP2": "R&I", "OP3": "Add'l labor", "OP4": "Align", "OP5": "Overhaul", "OP6": "Refinish", "OP7": "Inspect", "OP8": "Check/Adjust", "OP9": "Repair", "OP10": "Partial repair", "OP11": "Replace", "OP12": "Partial R&R", "OP13": "Add'l cost", "OP14": "Add'l operation", "OP15": "Blend", "OP16": "Sublet"}
 
@@ -72,11 +73,45 @@ def _clean(v: Any) -> Any:
     return v
 
 
-def read_dbf_rows(path: Path) -> list[dict[str, Any]]:
+def _open_dbf(path: Path):
+    """dbfread table; an untagged code page (language driver 0) is read as cp1252, which is
+    what US CCC ONE and FoxPro files are in practice, instead of dbfread's ascii fallback."""
     from dbfread import DBF
 
     table = DBF(str(path), ignore_missing_memofile=True, char_decode_errors="replace")
-    return [{k.upper(): _clean(v) for k, v in rec.items()} for rec in table]
+    if (table.encoding or "").lower() == "ascii":
+        table = DBF(str(path), ignore_missing_memofile=True, char_decode_errors="replace", encoding="cp1252")
+    return table
+
+
+def read_dbf_rows(path: Path) -> list[dict[str, Any]]:
+    return [{k.upper(): _clean(v) for k, v in rec.items()} for rec in _open_dbf(path)]
+
+
+def describe_job(path: str | Path) -> dict[str, list[dict[str, Any]]]:
+    """Field dictionary of one DBF job set, straight from the file headers.
+
+    The CIECA EMS spec is members-only, but every EMS table carries its own field list in
+    the DBF header, so this is how a shop locks down the exact layout CCC ONE writes.
+    Returns {section: [{name, type, length, decimals}, ...]} for every file in the set.
+    """
+    env_path = Path(path)
+    if env_path.suffix.lower() != ".env":
+        raise ValueError(f"Pass the .env file of a job: {env_path}")
+    stem = env_path.with_suffix("").name.lower()
+    out: dict[str, list[dict[str, Any]]] = {}
+    for p in sorted(env_path.parent.iterdir()):
+        if not (p.is_file() and p.with_suffix("").name.lower() == stem) or p.suffix.lower() in {".dbt", ".fpt"}:
+            continue
+        try:
+            table = _open_dbf(p)
+        except Exception as exc:                      # not a DBF (e.g. a stray .txt with the same stem)
+            out[p.suffix.lower().lstrip(".")] = [{"error": str(exc)}]
+            continue
+        out[p.suffix.lower().lstrip(".")] = [
+            {"name": f.name.upper(), "type": f.type, "length": f.length, "decimals": f.decimal_count} for f in table.fields
+        ]
+    return out
 
 
 def read_dbf_job(env_path: Path) -> EmsJob:
@@ -329,6 +364,7 @@ def to_repair_order(job: EmsJob, shop: dict[str, Any], today: date | None = None
         },
         labor_rates=rates,
         plate=str(veh.get("PLATE_NO") or "").strip(),
+        supplements=[{"supp_no": supp, "submitted": opened, "approved": None, "gross": gross, "amount": _num(ttl.get("SUPP_AMT"))}] if supp not in {"00", "0", ""} else [],
         notes=[Note(at=f"{opened}T08:00:00", author="ems-import", text=f"{job.kind.upper()} EMS import: estimate {job.estimate_id} supp {supp}; loss: {str(ad1.get('LOSS_DESC') or '').strip() or 'n/a'}; impact {str(veh.get('IMPACT_1') or '').strip()}")],
     )
     if ro.dropped_off and ro.stage == "scheduled":
@@ -401,8 +437,11 @@ def merge_into(store: Store, new: RepairOrder, rate_check: dict[str, float] | No
         for f in new.flags:
             if f not in ro.flags:
                 ro.flags.append(f)
-        if new.supp_no not in {"00", "0", ""} and "has_supplement" not in ro.flags:
-            ro.flags.append("has_supplement")
+        if new.supp_no not in {"00", "0", ""}:
+            if "has_supplement" not in ro.flags:
+                ro.flags.append("has_supplement")
+            if not any(sp.get("supp_no") == new.supp_no for sp in ro.supplements):
+                ro.supplements.append({"supp_no": new.supp_no, "submitted": stamp[:10], "approved": None, "gross": new.estimate_totals.get("gross", 0), "amount": new.estimate_totals.get("supplement", 0)})
         text = f"EMS import: estimate {new.estimate_id} supp {new.supp_no} ({len(new.lines)} lines, gross ${new.estimate_totals.get('gross', 0):,.2f})"
         if prev_supp and prev_supp != new.supp_no:
             text += f"; replaces supp {prev_supp}"

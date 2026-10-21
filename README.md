@@ -1,7 +1,7 @@
 # MAB Agents
 
 A fleet of AI agents built for **Mullikin's Auto Body**, a collision repair shop.
-Nine agents, each pairing a Claude model with deterministic shop tools, so the
+Ten agents, each pairing a Claude model with deterministic shop tools, so the
 model does the reading and writing while the numbers, dates and rules come from
 code you can test. A browser front-desk app sits on top so a new hire can run
 the front office on day one. See [docs/FRONT_DESK.md](docs/FRONT_DESK.md).
@@ -21,7 +21,8 @@ that a windshield means a camera calibration.
 | Parts Coordinator | `parts` | Builds the order per carrier rule (safety and structural stay OEM), tracks late parts, sources parts online with web search, prices through the shop matrix, ranks quotes against the rental clock | `build_order`, `parts_status`, `rfq_email`, `update_part`, `price_part`, `compare_quotes`, `vendors`, `web_search` |
 | Production Manager | `production` | WIP board, stalled ROs, promise dates, tech load, stage moves | `wip_board`, `stalled_ros`, `promise_date`, `move_stage`, `tech_load` |
 | Customer Communications | `customer` | Stage updates, delay and hidden-damage texts, review requests and replies | `status_update`, `delay_notice`, `supplement_notice`, `review_request`, `review_reply` |
-| Insurance & Claims Liaison | `insurance` | Supplement emails, total-loss math by state, rental extensions, storage notices | `supplement_request`, `total_loss_check`, `rental_extension`, `storage_notice`, `carrier_rule` |
+| Insurance & Claims Liaison | `insurance` | Supplement emails with a per-item basis, Maryland total-loss math and timelines, rental extensions, storage notices | `supplement_request`, `total_loss_check`, `rental_extension`, `storage_notice`, `carrier_rule` |
+| Accounts Receivable & Short-Pay | `ar` | Open balances by age, payment recording, short-pay letters with the basis per line, Maryland Insurance Administration complaint outline | `ar_aging`, `ro_balance`, `record_payment`, `short_pay_letter`, `mia_complaint_outline` |
 | Shop Manager | `manager` | Morning brief and KPIs; holds every other agent's tools for cross-department questions | `daily_brief`, `shop_kpis`, `repair_order`, `add_note` + all of the above |
 
 Every agent also has `search_knowledge`, which searches the shop's own documents
@@ -101,10 +102,15 @@ mab kb sync
 mab kb search "blend not included"
 ```
 
-`mab init` seeds `knowledge/` with a front-desk playbook, a collision glossary and
-`sources.toml`, a list of URLs (OEM position-statement hubs, the DEG, Maryland
-statutes) that `mab kb fetch` downloads into the folder; edit them, they are shop
-policy as far as the agents are concerned. Supported:
+`mab init` seeds `knowledge/` with a front-desk playbook, a collision glossary,
+three reference documents written for this shop (`maryland_collision_rules.md`,
+`oem_position_statements.md`, `industry_benchmarks.md`) and `sources.toml`, a
+list of 125 verified URLs (every major OEM's position statements on scanning,
+parts, restraints, wheels, glass and sectioning; the Maryland statutes on
+steering, written estimates, aftermarket-parts disclosure, liens and total loss;
+EPA 6H and OSHA respirator rules; CCC and DEG references) that `mab kb fetch`
+downloads into the folder. Edit them; they are shop policy as far as the agents
+are concerned. Supported:
 PDF, .md, .txt, .csv. Only load documents the shop is licensed to use. The index
 stays on the machine; only matching passages go into a prompt. (If you later
 want semantic search, the `KnowledgeBase.search` method is the one place to add
@@ -131,6 +137,7 @@ These need no model and are what the tests and CI exercise:
 | `mab price <list> [--type --cost --max-markup]` | Price a part through the matrix |
 | `mab kb sync|search|list|fetch` | Knowledge base (fetch downloads `knowledge/sources.toml`) |
 | `mab import-ems [path] [--watch]` | CCC ONE EMS jobs -> repair orders |
+| `mab import-ems --fields [path]` | print the field dictionary of your real CCC export (DBF headers) |
 | `mab sync-crisma [--dir] [--watch]` | CRISMA status -> repair orders (read-only) |
 | `mab ros` / `mab ro <ro>` | List or show repair orders |
 | `mab stage <ro> <stage>` | Move an RO and print the customer text draft |

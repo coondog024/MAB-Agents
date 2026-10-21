@@ -3,7 +3,7 @@ from __future__ import annotations
 
 
 from ..tools import kpi_tools
-from . import adas, customer, estimator, front_desk, insurance, parts, production
+from . import adas, ar, customer, estimator, front_desk, insurance, parts, production
 from .base import Agent, Ctx, beta_tool, j, tool_name
 
 INSTRUCTIONS = """
@@ -47,7 +47,7 @@ def build(ctx: Ctx) -> Agent:
         return j({"ok": True})
 
     shared = []
-    for mod in (production, parts, estimator, insurance, customer, adas, front_desk):
+    for mod in (production, parts, estimator, insurance, customer, adas, front_desk, ar):
         shared.extend(mod.build(ctx).tools)
     # De-duplicate by tool name, keeping the first.
     seen: set[str] = set()

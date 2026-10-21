@@ -94,11 +94,15 @@ def cmd_audit(args) -> int:
     else:
         lines = estimate_tools.parse_estimate(Path(args.file).read_text(encoding="utf-8"))
         airbags, year = args.airbags, args.year
-    findings = estimate_tools.audit_estimate(lines, airbags_deployed=airbags, model_year=year)
-    report = estimate_tools.audit_report(findings)
+    findings = estimate_tools.audit_estimate(lines, airbags_deployed=airbags, model_year=year, state=ctx.shop["shop"].get("state"))
+    rules = estimate_tools.evaluate_rules(lines)
+    report = estimate_tools.audit_report(findings, rules)
     print(f"{len(lines)} lines, {report['count']} findings ({report['high']} high / {report['medium']} medium / {report['low']} low)\n")
     for f in findings:
         print(f"[{f.severity.upper():<6}] {f.rule}: {f.message}\n         add: {f.suggested_line}")
+    print(f"\nShop catalogue: {rules['counts']['triggered']} triggered, {rules['counts']['verify']} verify-if-equipped, {rules['counts']['satisfied']} already on the estimate (score {rules['score']})")
+    for r in rules["triggered"]:
+        print(f"  [{r['severity'].upper():<6}] {r['title']}")
     print()
     _print(estimate_tools.totals(lines, ctx.rates()))
     return 0
@@ -252,6 +256,25 @@ def cmd_import_ems(args) -> int:
     if not folder:
         print("Give a path or set [ems] export_dir in shop.toml", file=sys.stderr)
         return 2
+
+    if args.fields:
+        # Print the field dictionary CCC ONE actually writes (the CIECA spec is members-only;
+        # the DBF headers are the authority). One job: the newest .env unless a file was given.
+        target = Path(folder)
+        envs = [target] if target.is_file() else [p for p in ems.find_jobs(target) if p.suffix.lower() == ".env"]
+        if not envs:
+            print(f"No .env job files under {folder}", file=sys.stderr)
+            return 1
+        env_path = envs[-1]
+        print(f"# {env_path}")
+        for sec, fields in ems.describe_job(env_path).items():
+            print(f"\n[{sec}]  {len(fields)} fields")
+            for f in fields:
+                if "error" in f:
+                    print(f"  ! {f['error']}")
+                else:
+                    print(f"  {f['name']:<12} {f['type']} {f['length']}" + (f".{f['decimals']}" if f['decimals'] else ""))
+        return 0
 
     def show(r: dict) -> None:
         if "error" in r:
@@ -410,7 +433,7 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("kb", help="knowledge base: sync | search | list"); kb = s.add_subparsers(dest="kb_cmd", required=True)
     kb.add_parser("sync"); kb.add_parser("list"); ks = kb.add_parser("search"); ks.add_argument("query"); ks.add_argument("-k", type=int, default=5)
     kf = kb.add_parser("fetch", help="download knowledge/sources.toml URLs"); kf.add_argument("--sources"); kf.add_argument("--refresh", action="store_true"); s.set_defaults(fn=cmd_kb)
-    s = sub.add_parser("import-ems", help="import CCC ONE EMS jobs (DBF sets or .EST) from a folder or file"); s.add_argument("path", nargs="?"); s.add_argument("--watch", action="store_true"); s.add_argument("--poll", type=float, default=30); s.set_defaults(fn=cmd_import_ems)
+    s = sub.add_parser("import-ems", help="import CCC ONE EMS jobs (DBF sets or .EST) from a folder or file"); s.add_argument("path", nargs="?"); s.add_argument("--watch", action="store_true"); s.add_argument("--poll", type=float, default=30); s.add_argument("--fields", action="store_true", help="print the DBF field dictionary of the newest job instead of importing"); s.set_defaults(fn=cmd_import_ems)
     s = sub.add_parser("sync-crisma", help="read RO status from CRISMA's BSRO/BSLOC tables (read-only)"); s.add_argument("--dir", help="CRISMA data folder (default from shop.toml)"); s.add_argument("--watch", action="store_true"); s.add_argument("--poll", type=float, default=60); s.set_defaults(fn=cmd_sync_crisma)
     s = sub.add_parser("serve", help="run the front-desk web app"); s.add_argument("--host", default="127.0.0.1"); s.add_argument("--port", type=int, default=8765); s.set_defaults(fn=cmd_serve)
     sub.add_parser("mcp", help="serve the shop tools to Claude Desktop over MCP (stdio)").set_defaults(fn=cmd_mcp)

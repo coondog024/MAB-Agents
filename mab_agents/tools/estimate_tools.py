@@ -173,8 +173,29 @@ def audit_estimate(
     airbags_deployed: bool = False,
     adas_equipped: bool = True,
     model_year: int | None = None,
+    state: str | None = None,
 ) -> list[Finding]:
     f: list[Finding] = []
+    # 0. State disclosure duties on the shop (Maryland Commercial Law 14-2302: list of crash parts,
+    #    OEM/non-OEM stated, statutory aftermarket notice in 10-point capitals before repairs).
+    non_oem = [l.line for l in lines if l.part_type in {"aftermarket", "recycled", "reconditioned"} and l.operation in {"replace", "r&r"}]
+    if non_oem and (state or "").upper() == "MD":
+        f.append(Finding(
+            rule="md_aftermarket_disclosure",
+            severity="high",
+            message="Non-OEM crash parts on the estimate. Maryland Commercial Law 14-2302: give the owner the crash-parts list stating OEM vs non-OEM before repairs, print the aftermarket disclosure on the estimate, and have the part warranty available. Quote the OEM-upgrade difference in dollars.",
+            suggested_line="Attach the 14-2302 aftermarket crash parts disclosure; customer signs the parts list",
+            trigger_lines=non_oem,
+        ))
+    used = [l.line for l in lines if l.part_type in {"recycled", "reconditioned"} and l.operation in {"replace", "r&r"}]
+    if used and (state or "").upper() == "MD":
+        f.append(Finding(
+            rule="md_used_parts_disclosure",
+            severity="medium",
+            message="Used, rebuilt or reconditioned parts on the estimate. Maryland Commercial Law 14-1003: the final invoice must clearly disclose each one (including parts inside an assembly); 14-1004: offer the replaced parts back to the customer at pickup and note whether they were taken.",
+            suggested_line="Mark LKQ/recond lines USED or REBUILT on the invoice; offer replaced parts at delivery",
+            trigger_lines=used,
+        ))
     refinished = [l for l in lines if l.operation in {"refinish", "replace", "repair"} and l.paint_hours > 0]
     refinished_panels = {panel_of(l.description) for l in refinished} - {None}
     blended_panels = {panel_of(l.description) for l in lines if l.operation == "blend"} - {None}
