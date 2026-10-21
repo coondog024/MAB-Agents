@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 
-from ..tools import customer_tools, frontdesk_tools
+from ..tools import customer_tools, forms_tools, frontdesk_tools
 from .base import Agent, Ctx, beta_tool, j
 
 INSTRUCTIONS = """
@@ -13,6 +13,7 @@ You sit next to the person at the front desk. Assume they started this week and 
 - Money: `what_customer_owes` before anyone quotes a balance. Never waive a deductible.
 - Check-in and delivery: `checklist` gives the steps; walk them through it one item at a time if asked.
 - After they send a message, remind them to `log_sent` so the next shift sees it.
+- Paperwork: `paperwork` says which Maryland forms this RO needs and when (repair authorization with the Customer's Rights block at check-in; crash-parts list and aftermarket disclosure before parts are ordered; additional-repairs consent when a supplement or customer-pay item is added; invoice addendum at delivery). They print from the Paperwork buttons on the RO page or `mab forms <ro>`. Tow-in or after-hours drop: the rights are read by phone and the oral-notice block on the authorization is filled in and signed.
 - Escalate to the manager, and say so plainly, when: the customer asks for the manager, an adjuster denies a safety operation, a total-loss conversation starts, there is any threat of a complaint, or anything about injury or damage in our care.
 Never promise a date, a price or coverage. Those come from production, the estimator and the carrier.
 """.strip()
@@ -78,6 +79,19 @@ def build(ctx: Ctx) -> Agent:
         return j(frontdesk_tools.payment_summary(ctx.store.require(ro_number), ctx.shop, storage_days))
 
     @beta_tool
+    def paperwork(ro_number: str) -> str:
+        """Which printed Maryland forms a repair order needs right now, when each is handed over, and why.
+
+        Args:
+            ro_number: The RO number.
+        """
+        ro = ctx.store.require(ro_number)
+        needed = forms_tools.required_forms(ro, ctx.shop, ctx.today)
+        return j({"ro": ro.ro_number, "stage": ro.stage, "forms": needed,
+                  "print": "Paperwork buttons on the RO page in the front-desk app, or `mab forms " + ro.ro_number + "`",
+                  "oral_notice": forms_tools.STATUTES["oral_notice_rule"]})
+
+    @beta_tool
     def log_sent(ro_number: str, text: str, channel: str = "sms") -> str:
         """Record that a message was sent to the customer (after a human actually sent it).
 
@@ -96,7 +110,7 @@ def build(ctx: Ctx) -> Agent:
         name="the Front Desk agent",
         role="the trainer and safety net sitting next to whoever is answering the phone today",
         instructions=INSTRUCTIONS,
-        tools=[lookup_customer, status_text, phone_script, todays_calls, checklist, daily_routine, what_customer_owes, log_sent],
+        tools=[lookup_customer, status_text, phone_script, todays_calls, checklist, daily_routine, what_customer_owes, log_sent, paperwork],
         keywords=["what do i say", "how do i", "script", "front desk", "phone", "caller", "calling", "on the phone", "check in", "check-in", "checklist", "who do i call", "call list", "need to text", "need to call", "text today", "call today", "who needs", "owes", "balance", "pay at pickup", "paying the deductible", "pays the deductible", "new hire", "training", "routine", "opening", "closing", "look up", "lookup", "customer named", "walk me through"],
         examples=["A customer is on the phone asking why she pays the deductible to us. What do I say?", "Who do I need to text today?"],
         shop=ctx.shop,

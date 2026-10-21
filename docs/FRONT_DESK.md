@@ -54,8 +54,18 @@ it should stay on the shop's private network.)
 Check-in tab. Fill the form while they're on the phone (name, mobile, year,
 make, model, what happened, insurer and claim number, deductible, rental company
 and how many rental days the policy covers). The covered days matter: the Today
-list warns you before a rental runs out. Click **Create RO**. You get the RO number and the photo list for when the car arrives. The
+list warns you before a rental runs out. Click **Create RO**. You get the RO number, the photo list for when the car arrives, and a
+**Print the repair authorization** button. Print it, have the customer read the
+"Customer's Rights" box and sign above it, and keep the signed copy with the RO. If the
+car came in on a hook or after hours, read those rights to the customer by phone and fill
+in the box at the bottom of the form (who you told, date, time, your signature). The
 check-in and delivery checklists are on the same page.
+
+Every RO page has a **Paperwork** row. The buttons tell you which forms this job needs
+and when: the aftermarket parts sheet before parts are ordered (the customer sees which
+parts are not factory parts and signs), the additional-repairs consent when a supplement
+or a customer-pay item is added, and the invoice addendum at pickup. Each opens a print
+view in a new tab.
 
 ## Money
 
@@ -66,6 +76,10 @@ can still change things, which is why the line says we'll tell them before
 pickup. If it says the deductible isn't on file yet, ask the adjuster or the
 customer and add it before anyone is quoted a number. We do not waive
 deductibles. Card, cash or check.
+
+At pickup, print the **invoice addendum** from the Paperwork row: it lists any used or
+rebuilt parts, has the box for whether the customer took their old parts, shows the
+balance, and repeats the required notices. The customer signs it and takes a copy.
 
 ## Parts questions
 

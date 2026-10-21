@@ -25,12 +25,12 @@ from http.cookies import SimpleCookie
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 
 from . import fleet as fleet_mod
 from .agents.base import Ctx
 from .models import STAGE_LABELS, STAGES
-from .tools import customer_tools, estimate_tools, frontdesk_tools, kpi_tools, parts_tools, schedule_tools
+from .tools import customer_tools, estimate_tools, forms_tools, frontdesk_tools, kpi_tools, parts_tools, schedule_tools
 
 INDEX = Path(__file__).with_name("web") / "index.html"
 NO_KEY_MESSAGE = "The agents need an Anthropic API key. Ask the manager to put ANTHROPIC_API_KEY in .env and restart `mab serve`. Everything else on this page works without it."
@@ -80,7 +80,11 @@ class Api:
 
             d["balance"] = ar_tools.balance(ro, ctx.rates())
             d["rental_days_used"] = ro.rental_days_used(ctx.today)
+            d["forms"] = forms_tools.required_forms(ro, ctx.shop, ctx.today)
             return d
+        if path.startswith("/api/forms/"):
+            ro = ctx.store.require(unquote(path.rsplit("/", 1)[1]))
+            return forms_tools.required_forms(ro, ctx.shop, ctx.today)
         if path == "/api/stages":
             return [{"key": s, "label": STAGE_LABELS[s]} for s in STAGES]
         if path == "/api/scripts":
@@ -95,6 +99,17 @@ class Api:
         if path == "/api/agents":
             return fleet_mod.describe(self.fleet)
         raise KeyError(f"No such endpoint: {path}")
+
+    def form_html(self, path: str) -> str:
+        """GET /forms/<ro>/<kind>: a printable page. KeyError -> 404 like the JSON routes."""
+        parts = [unquote(x) for x in path.strip("/").split("/")]
+        if len(parts) != 3 or parts[0] != "forms":
+            raise KeyError(f"No such page: {path}")
+        _, ro_number, kind = parts
+        if kind not in forms_tools.FORM_KINDS:
+            raise KeyError(f"No such form: {kind}")
+        ro = self.ctx.store.require(ro_number)
+        return forms_tools.render(kind, ro, self.ctx.shop, self.ctx.rates(), self.ctx.today)
 
     # ---- POST --------------------------------------------------------------
     def post(self, path: str, body: dict[str, Any]) -> Any:
@@ -162,7 +177,8 @@ class Api:
                 "rental_company": str(body.get("rental_company") or ""), "rental_covered_days": int(body.get("rental_covered_days") or 0),
             }))
             photos = json.loads(tools["photo_checklist"].call({"damage_area": body.get("loss_description", "general")}))
-            return {**created, "photos": photos["photos"], "checkin": frontdesk_tools.CHECKIN_CHECKLIST}
+            return {**created, "photos": photos["photos"], "checkin": frontdesk_tools.CHECKIN_CHECKLIST,
+                    "authorization_form": forms_tools.form_url(created["created"], "authorization")}
         if path == "/api/parts/price":
             return parts_tools.price_part(float(body["list_price"]), body.get("part_type", "oem"), ctx.shop, cost=body.get("cost"), max_markup=body.get("max_markup"))
         if path == "/api/parts/compare":
@@ -260,6 +276,9 @@ def make_handler(api: Api, token: str):
                 extra = {"Set-Cookie": f"mab_token={token}; Path=/; Max-Age=31536000; SameSite=Strict; HttpOnly"} if token_ok(q.get("token")) else None
                 return self._send(HTTPStatus.OK, INDEX.read_bytes(), "text/html", extra)
             try:
+                if u.path.startswith("/forms/"):
+                    page = api.form_html(u.path).encode("utf-8")
+                    return self._send(HTTPStatus.OK, page, "text/html", {"Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'"})
                 return self._send(HTTPStatus.OK, api.get(u.path, q))
             except KeyError:
                 return self._send(HTTPStatus.NOT_FOUND, {"error": "Not found"})

@@ -1,7 +1,7 @@
 """`mab` command line.
 
 Offline commands (no API key): init, agents, ros, ro, stage, audit, adas, board, msg, brief, kpi,
-lookup, queue, script, price, kb, import-ems, sync-crisma, serve (the web app; only "Ask" needs a key).
+lookup, queue, script, price, forms, kb, import-ems, sync-crisma, serve (the web app; only "Ask" needs a key).
 Model commands (need ANTHROPIC_API_KEY): ask, chat. `mcp` serves the tools to Claude Desktop.
 """
 from __future__ import annotations
@@ -209,6 +209,25 @@ def cmd_script(args) -> int:
             for line in s[section]:
                 print(f"  - {line}")
     print(f"\nTHEN: {s['then']}")
+    return 0
+
+
+def cmd_forms(args) -> int:
+    from .tools import forms_tools
+
+    ctx = _ctx(args)
+    ro = ctx.store.require(args.ro)
+    needed = forms_tools.required_forms(ro, ctx.shop, ctx.today)
+    for f in needed:
+        print(f"{'NEEDED ' if f['required'] else 'later  '} {f['kind']:<19} {f['when']}\n        {f['why']}")
+    if args.list:
+        return 0
+    kinds = args.kind or [f["kind"] for f in needed if f["required"]]
+    out = Path(args.out) if args.out else config.data_dir() / "forms"
+    paths = forms_tools.write_forms(ro, ctx.shop, ctx.rates(), out, kinds=kinds, today=ctx.today)
+    print("\nWritten (open in a browser and print):")
+    for p in paths:
+        print(f"  {p}")
     return 0
 
 
@@ -429,6 +448,8 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("lookup", help="find a customer by phone, name, RO or vehicle"); s.add_argument("query"); s.set_defaults(fn=cmd_lookup)
     sub.add_parser("queue", help="who needs a call or text today").set_defaults(fn=cmd_queue)
     s = sub.add_parser("script", help="phone script for a situation"); s.add_argument("situation"); s.set_defaults(fn=cmd_script)
+    s = sub.add_parser("forms", help="print-ready Maryland paperwork for an RO (authorization, aftermarket disclosure, additional-repairs consent, invoice addendum)")
+    s.add_argument("ro"); s.add_argument("--kind", action="append", choices=["authorization", "aftermarket", "supplement_consent", "invoice_addendum"], help="which form(s); default: the ones this RO needs"); s.add_argument("--out", help="folder for the HTML files (default: forms/ next to shop.toml)"); s.add_argument("--list", action="store_true", help="only say which forms this RO needs"); s.set_defaults(fn=cmd_forms)
     s = sub.add_parser("price", help="price a part through the shop matrix"); s.add_argument("list_price", type=float); s.add_argument("--type", default="oem"); s.add_argument("--cost", type=float); s.add_argument("--max-markup", type=float, dest="max_markup"); s.set_defaults(fn=cmd_price)
     s = sub.add_parser("kb", help="knowledge base: sync | search | list"); kb = s.add_subparsers(dest="kb_cmd", required=True)
     kb.add_parser("sync"); kb.add_parser("list"); ks = kb.add_parser("search"); ks.add_argument("query"); ks.add_argument("-k", type=int, default=5)

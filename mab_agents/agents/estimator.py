@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 
-from ..tools import estimate_tools
+from ..tools import estimate_tools, forms_tools
 from .base import Agent, Ctx, beta_tool, j
 
 INSTRUCTIONS = """
@@ -15,6 +15,7 @@ You review damage estimates the way a senior estimator does before they leave th
 - Flag anything priced below our posted rate or any labor type that looks mis-coded (structural time coded as body, mechanical as body).
 - If the estimate was written by a carrier or a photo-app, say so and list the standard teardown items it will not contain.
 - Output format: a short summary line, then "Add to estimate" as a numbered list (description, labor hours/type, refinish hours, part), then "Verify" items, then totals.
+- Parts type matters in Maryland: `crash_parts_disclosure` lists every replacement part with OEM / aftermarket / used / rebuilt stated and says whether the 14-2302 aftermarket statement must print; the front desk hands that sheet to the customer before parts are ordered.
 Do not invent labor times. Where a time is needed, say "per database" or "actual time, document it" rather than guessing a number.
 """.strip()
 
@@ -49,6 +50,18 @@ def build(ctx: Ctx) -> Agent:
                   "lines": [l.__dict__ for l in ro.lines], **estimate_tools.audit_report(findings, estimate_tools.evaluate_rules(ro.lines))})
 
     @beta_tool
+    def crash_parts_disclosure(ro_number: str) -> str:
+        """The replacement-parts list for an RO with each part's type stated (genuine, aftermarket, used, rebuilt), which ones are crash parts, and whether Maryland's aftermarket crash-parts statement (Com. Law 14-2302) must be printed.
+
+        Args:
+            ro_number: The RO number.
+        """
+        ro = ctx.store.require(ro_number)
+        d = forms_tools.aftermarket_data(ro, ctx.shop, ctx.today)
+        d["print"] = forms_tools.form_url(ro.ro_number, "aftermarket")
+        return j(d)
+
+    @beta_tool
     def estimate_totals(estimate: str = "", ro_number: str = "") -> str:
         """Totals at the shop's posted rates for either pasted estimate text or an RO on file. Provide one of the two arguments.
 
@@ -64,7 +77,7 @@ def build(ctx: Ctx) -> Agent:
         name="the Estimate Auditor",
         role="a senior collision estimator who catches not-included operations and writes supplements that get approved the first time",
         instructions=INSTRUCTIONS,
-        tools=[audit_estimate_text, audit_repair_order, estimate_totals],
+        tools=[audit_estimate_text, audit_repair_order, estimate_totals, crash_parts_disclosure],
         keywords=["estimate", "blend", "not included", "p-page", "refinish", "labor time", "missed", "audit", "feather", "prime", "teardown found", "line item", "csv", "not on it", "what's missing", "quarter panel", "labor hours"],
         examples=[
             "Audit RO 26-1042 and tell me what the carrier's estimate missed.",

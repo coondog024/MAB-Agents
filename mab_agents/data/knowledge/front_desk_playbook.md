@@ -82,6 +82,15 @@ Behind that script: Maryland Insurance Article 10-503 forbids an insurer from re
 ### "Is my car worth less now?" (diminished value)
 "A repaired car can be worth less than before the accident; that's called diminished value, and in Maryland it's a real claim. If the other driver was at fault you claim it from their insurance company after the repair is done; after a hit-and-run or an uninsured driver your own uninsured-motorist property damage coverage has to consider it. Insurers don't bring it up, so you ask in writing, with a before-and-after valuation from a dealer or an independent appraiser. We'll give you the invoice, photos and reports for the file." Never quote an amount, never say we appraise or file it, and don't promise it applies under the customer's own collision coverage (the policy may exclude it). MIA Bulletin 24-8 and the Maryland rules doc have the detail.
 
+## Paperwork (Maryland)
+
+Four printed forms, all on the RO page under **Paperwork** (or `mab forms <ro>`):
+the repair authorization with the "Customer's Rights" box at check-in; the replacement
+crash parts list with the aftermarket statement before parts are ordered; the
+additional-repairs consent whenever a supplement or customer-pay item is added; the
+invoice addendum at pickup (used or rebuilt parts disclosed, replaced parts offered back,
+balance, notices). The customer signs each one and the signed copy stays with the RO.
+
 ## Check-in checklist
 
 1. Photo ID and insurance card; confirm phone number and preferred contact (text or call).

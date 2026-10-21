@@ -116,6 +116,23 @@ stays on the machine; only matching passages go into a prompt. (If you later
 want semantic search, the `KnowledgeBase.search` method is the one place to add
 embeddings.)
 
+## Paperwork the law expects (Maryland)
+
+Every RO page has **Paperwork** buttons, and `mab forms <ro>` writes the same pages to
+`forms/` for printing. The text comes from the Maryland Code and sits in one place
+(`forms_tools.STATUTES`) so it can be re-checked each session:
+
+| Form | When | What it carries |
+|---|---|---|
+| Repair authorization and direction to pay | check-in, before any work | the **Customer's Rights** block immediately above the signature line (Com. Law 14-1008), the written-estimate items and damage-responsibility notice (14-1002), the NHTSA adjustment-program notice, storage terms, and the oral-notice record for tow-ins and after-hours drops |
+| Replacement crash parts list and aftermarket disclosure | before parts are ordered | every replacement part with genuine / aftermarket / used / rebuilt stated and the 10-point capital statement when an aftermarket crash part is used (14-2302) |
+| Authorization for additional repairs | when a supplement or customer-pay item is added | the supplement log, customer-pay items, the 10% consent (14-1002) and the permission record (14-1006) |
+| Final invoice addendum | at delivery | used / rebuilt parts disclosed (14-1003), replaced parts tendered (14-1004), the money line, the warranty wording from `shop.toml`, the notices repeated |
+
+The shop's own terms (direction to pay, personal property, storage grace days,
+estimate fee) are in `[forms]` in `shop.toml`. The pages print from the browser
+(Ctrl+P, or the Print button) to paper or PDF.
+
 ## Parts: sourcing and pricing
 
 - **Pricing matrix** in `shop.toml` `[parts]`: OEM is billed at list with the dealer discount as margin; aftermarket, recycled and sublet are cost plus markup; carrier caps are honoured per quote.
@@ -135,6 +152,7 @@ These need no model and are what the tests and CI exercise:
 | `mab lookup <phone|name|RO>` | Find a customer |
 | `mab script <situation>` | Phone script (new_claim, deductible, delay_complaint, …) |
 | `mab price <list> [--type --cost --max-markup]` | Price a part through the matrix |
+| `mab forms <ro> [--kind k] [--out dir] [--list]` | Print-ready Maryland paperwork for an RO (authorization with Customer's Rights, aftermarket crash-parts disclosure, additional-repairs consent, invoice addendum) |
 | `mab kb sync|search|list|fetch` | Knowledge base (fetch downloads `knowledge/sources.toml`) |
 | `mab import-ems [path] [--watch]` | CCC ONE EMS jobs -> repair orders |
 | `mab import-ems --fields [path]` | print the field dictionary of your real CCC export (DBF headers) |

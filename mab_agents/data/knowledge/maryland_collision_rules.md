@@ -56,13 +56,25 @@ immediately above the signature line, in conspicuous type, under the heading
 (2) may not be charged more than 10% over the written estimate without
 consent; (3) is entitled to the return of replaced parts, except parts that
 must go back to the manufacturer under warranty; (4) may not be charged for
-repairs not originally authorized without consent. If the vehicle was towed in
-or left while the shop was closed, oral notice is allowed, but the shop must
-write down the name of the person notified, the date and time, and the
-signature of the person who gave notice. The form also carries the federal
-NHTSA "manufacturer special policy adjustment program" notice and the
-premises-damage liability statement. This block belongs on the CRISMA repair
-authorization printout.
+repairs not originally authorized without consent. The statute writes "ten
+percent" here and prescribes the substance of the rights, the heading
+"Customer's Rights" and the placement, not a type size ("conspicuously in
+easily readable type"). If the vehicle was towed in or left while the shop was
+closed, oral notice is allowed, but the shop must write down the name of the
+person notified, the date and time, and the signature of the person who gave
+notice. The form must also carry, word for word, the notice headed
+"Manufacturer Special Policy Adjustment Programs" ("Federal law requires
+manufacturers to furnish the National Highway Traffic Safety Administration
+(N.H.T.S.A.) with bulletins describing any defects in their vehicles. You may
+obtain copies of these bulletins from either the manufacturer or N.H.T.S.A. In
+addition, certain consumer publications or organizations publish this
+information, which may be available for a fee or for free.") and a clear
+statement that while the vehicle is on the premises the facility may not be
+responsible for damage to it under certain circumstances and that the customer
+should ask about the extent of its responsibility and insurance coverage. The
+same NHTSA notice and premises statement go on the final invoice (§14-1003).
+Neither the Attorney General nor the MVA publishes a model form; MAB's
+authorization form carries these blocks with the statutory wording.
 
 **§14-1002, the written estimate.** For any job over $50 the shop must give a
 written estimate on request before starting work (completion date, labor and
@@ -98,18 +110,26 @@ MANUFACTURER OF THE VEHICLE OR BY A MANUFACTURER AUTHORIZED BY THE ORIGINAL
 MANUFACTURER TO USE ITS NAME OR TRADEMARK. THE USE OF CERTAIN AFTERMARKET CRASH
 PARTS MAY MODIFY THE ORIGINAL MANUFACTURER'S WARRANTY ON THE CRASH PARTS BEING
 REPLACED. UPON REQUEST OF THE CUSTOMER, THE BODY SHOP SHALL PROVIDE, IF
-AVAILABLE, A COPY OF ANY WARRANTY FOR AN AFTERMARKET CRASH PART USED." "Crash
-parts" (§14-2301) are the exterior and interior sheet-metal or fiberglass panels
-that form the body or frame (fenders, bumpers, hoods, door panels) on passenger
-cars. **Insurance Article §27-906** puts the parallel warranty-copy duty on
-insurers.
+AVAILABLE, A COPY OF ANY WARRANTY FOR AN AFTERMARKET CRASH PART USED."
+§14-2302(c) puts both the parts list and the statement "in writing in a clear
+and conspicuous manner in 10 point capital type", so the crash-parts list
+itself prints in capitals too. "Crash parts" (§14-2301) are "exterior or
+interior sheet metal or fiberglass panels and parts which form the
+superstructure or body of a motor vehicle including but not limited to fenders,
+bumpers, quarter panels, door panels, hoods, grills, firewalls, permanent
+roofs, wheelwells, and front and rear lamp display panels"; the subtitle covers
+passenger cars (Transportation §11-144.2), not motor homes. **Insurance Article
+§27-906** puts the parallel warranty-copy duty on insurers.
 
 Front-desk use: the parts-type column on the estimate is reviewed with the
 customer and signed before parts are ordered; the OEM-upgrade difference is
 quoted in dollars; the aftermarket statement goes with the estimate; LKQ and
 reconditioned lines are marked on the invoice; replaced parts are offered at
 delivery. The estimate auditor flags both the aftermarket and the used-parts
-duties when the shop state is MD.
+duties when the shop state is MD. MAB prints the four documents these sections call
+for (repair authorization with the Customer's Rights block, crash-parts list and
+aftermarket disclosure, additional-repairs consent, invoice addendum) from the RO
+page's Paperwork buttons or `mab forms <ro>`.
 Sources: https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcl&section=14-1008 ;
 same URL with section=14-1002, 14-1003, 14-1004, 14-1006, 14-1007, 14-2302
 
